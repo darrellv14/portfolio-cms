@@ -5,6 +5,15 @@
 import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**", // Mengizinkan semua hostname untuk development
+      },
+    ],
+  },
+};
 
 export default config;
