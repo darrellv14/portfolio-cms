@@ -63,7 +63,7 @@ export const testimonialRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const updatedTestimonial = ctx.db.testimonial.update({
+      const updatedTestimonial = await ctx.db.testimonial.update({
         where: {
           id: input.id,
         },
@@ -81,11 +81,11 @@ export const testimonialRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const deletedTestimonial = ctx.db.testimonial.delete({
+      const deletedTestimonial = await ctx.db.testimonial.delete({
         where: {
           id: input.id,
         },
       });
-      return { success: true, deletedId: (await deletedTestimonial).id };
+      return { success: true, deletedId: deletedTestimonial.id };
     }),
 });
