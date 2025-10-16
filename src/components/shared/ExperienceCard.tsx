@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { Prisma } from "@prisma/client";
 import Image from "next/image";
+import { m } from "framer-motion";
 import { Button } from "../ui/button";
 import { DeleteExperienceDialog } from "./DeleteExperienceDialog";
 import { ExperienceDialog } from "./ExperienceDialog";
@@ -23,7 +24,13 @@ export const ExperienceCard = ({
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="bg-card text-card-foreground flex flex-col items-start gap-4 rounded-lg border p-4 transition-shadow hover:shadow-md md:flex-row md:items-center md:space-x-4 md:p-6">
+    <m.div
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="bg-card text-card-foreground flex flex-col items-start gap-4 rounded-lg border p-4 transition-shadow hover:shadow-md md:flex-row md:items-center md:space-x-4 md:p-6"
+    >
       <div className="relative mx-auto h-20 w-20 flex-shrink-0 md:mx-0 md:h-16 md:w-16">
         <Image
           src={experience.logoUrl}
@@ -45,10 +52,13 @@ export const ExperienceCard = ({
 
         <div className="text-muted-foreground text-justify text-sm leading-relaxed md:text-base">
           <p
-            className={`transition-all duration-300 ${expanded ? "" : "line-clamp-3"}`}
+            className={`transition-all duration-300 ${
+              expanded ? "" : "line-clamp-3"
+            }`}
           >
             {experience.description}
           </p>
+
           {experience.description.length > 120 && (
             <Button
               variant="link"
@@ -62,13 +72,12 @@ export const ExperienceCard = ({
         </div>
       </div>
 
-      {/* Tombol Admin */}
       {isAdmin && (
         <div className="ml-auto flex shrink-0 self-start md:self-center">
           <ExperienceDialog experience={experience} />
           <DeleteExperienceDialog experienceId={experience.id} />
         </div>
       )}
-    </div>
+    </m.div>
   );
 };

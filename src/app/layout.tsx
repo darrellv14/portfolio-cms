@@ -8,6 +8,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 import { Navbar } from "~/components/shared/Navbar";
 import { Toaster } from "~/components/ui/sonner";
 import { ThemeProvider } from "~/components/theme-provider";
+import { MotionLazyProvider } from "~/components/providers/MotionLazyProvider";
 
 export const metadata: Metadata = {
   title: "Delvin's Portfolio",
@@ -34,11 +35,13 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              <Navbar />
-              <main className="container mx-auto px-4 py-8 md:px-6">
-                {children}
-              </main>
-              <Toaster />
+              <MotionLazyProvider>
+                <Navbar />
+                <main className="container mx-auto px-4 py-8 md:px-6">
+                  {children}
+                </main>
+                <Toaster />
+              </MotionLazyProvider>
             </ThemeProvider>
           </TRPCReactProvider>
         </SessionProvider>
