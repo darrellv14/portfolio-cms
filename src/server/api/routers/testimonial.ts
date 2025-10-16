@@ -41,11 +41,11 @@ export const testimonialRouter = createTRPCRouter({
         description: z
           .string()
           .min(10, "Testimoninya panjangan dikit atuh :(")
-          .max(100),
+          .max(500),
         position: z
           .string()
           .min(5, "Kamu CEO @ Bank Indonesia yh")
-          .max(30, "Jabatan apaan tuh panjang bener"),
+          .max(100, "Jabatan apaan tuh panjang bener"),
       }),
     )
     .mutation(async ({ ctx, input }) => {
