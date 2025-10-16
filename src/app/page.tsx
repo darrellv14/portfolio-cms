@@ -137,17 +137,23 @@ export default function HomePage() {
       <Separator />
 
       <section id="projects" className="space-y-6">
-        <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="flex-1 space-y-2">
-            <h1 className="text-xl font-bold lg:text-4xl">My Projects</h1>
-            <p className="text-muted-foreground text-justify text-sm leading-relaxed font-normal tracking-wide lg:text-xl">
-              This section showcases all of Darrell&apos;s project, mainly
-              focusing on Web Development, Software Engineering, and Fullstack
-              Developer.
-            </p>
-          </div>
-          {isAdmin && <ProjectDialog />}
+        <div className="grid grid-cols-[1fr_auto] items-start gap-3">
+          <h1 className="text-xl font-bold sm:text-2xl lg:text-4xl">
+            My Projects
+          </h1>
+          {isAdmin && (
+            <div className="justify-self-end">
+              <ProjectDialog />
+            </div>
+          )}
+
+          <p className="text-muted-foreground col-span-2 text-justify text-sm leading-relaxed font-normal tracking-wide sm:text-base lg:text-xl">
+            This section showcases all of Darrell&apos;s project, mainly
+            focusing on Web Development, Software Engineering, and Fullstack
+            Developer.
+          </p>
         </div>
+
         {projects?.length === 0 ? (
           <p className="text-muted-foreground">No projects yet! Coming soon.</p>
         ) : (
