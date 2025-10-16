@@ -1,6 +1,6 @@
-// Hanya impor createTRPCRouter, kita tidak butuh createCallerFactory lagi
 import { createTRPCRouter } from "~/server/api/trpc";
 import { projectRouter } from "~/server/api/routers/project";
+import { testimonialRouter } from "./routers/testimonial";
 
 /**
  * This is the primary router for your server.
@@ -9,6 +9,7 @@ import { projectRouter } from "~/server/api/routers/project";
  */
 export const appRouter = createTRPCRouter({
   project: projectRouter,
+  testimonial: testimonialRouter,
 });
 
 // export type definition of API
