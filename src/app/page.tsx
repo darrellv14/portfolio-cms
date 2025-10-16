@@ -70,7 +70,7 @@ export default function HomePage() {
   return (
     <main className="container mx-auto space-y-12 px-4 py-8">
       <section id="projects" className="space-y-6">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex-1 space-y-2">
             <h1 className="text-xl font-bold lg:text-4xl">My Projects</h1>
             <p className="text-muted-foreground text-justify text-sm leading-relaxed font-normal tracking-wide lg:text-xl">
