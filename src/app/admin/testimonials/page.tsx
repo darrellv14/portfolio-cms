@@ -46,7 +46,7 @@ export default function AdminTestimonialsPage() {
   }
 
   return (
-    <main className="space-y-6">
+    <main className="container mx-auto space-y-12 px-4 py-8">
       <h1 className="text-xl font-bold lg:text-4xl">Pending Testimonials</h1>
 
       {isLoading ? (

@@ -38,8 +38,14 @@ export const testimonialRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
-        description: z.string().min(10, "Testimoninya panjangan dikit atuh :("),
-        position: z.string().min(5, "Kamu CEO @ Bank Indonesia yh"),
+        description: z
+          .string()
+          .min(10, "Testimoninya panjangan dikit atuh :(")
+          .max(100),
+        position: z
+          .string()
+          .min(5, "Kamu CEO @ Bank Indonesia yh")
+          .max(30, "Jabatan apaan tuh panjang bener"),
       }),
     )
     .mutation(async ({ ctx, input }) => {

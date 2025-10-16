@@ -4,7 +4,6 @@ import { Skeleton } from "~/components/ui/skeleton";
 export const ProjectCardSkeleton = () => {
   return (
     <Card className="flex flex-col overflow-hidden">
-      {/* Kita ganti warna default skeleton agar lebih kontras */}
       <Skeleton className="h-72 w-full bg-slate-300/60 dark:bg-gray-800/60" />
 
       <CardHeader>
