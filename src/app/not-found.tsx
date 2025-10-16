@@ -11,7 +11,7 @@ export default function NotFound() {
           404 - Page Not Found, No noo yahh!
         </h1>
         <p className="text-muted-foreground text-lg">
-          Oops, you are lost in the dark rainforest, let's go back!
+          Oops, you are lost in the dark rainforest, let&apos;s go back!
         </p>
       </div>
       <Button asChild>
