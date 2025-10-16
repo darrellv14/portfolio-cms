@@ -17,6 +17,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 import Image from "next/image";
 import { DarkModeToggle } from "./DarkModeToggle";
+import { env } from "~/env";
 
 const navLinks = [
   { href: "#about", label: "About Me" },
@@ -29,6 +30,8 @@ export const Navbar = () => {
   const { data: session, status } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const isAdmin = session?.user.email === env.NEXT_PUBLIC_ADMIN_EMAIL;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -122,6 +125,11 @@ export const Navbar = () => {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>{session.user.name}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                {isAdmin && (
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin/testimonials">Admin Dashboard</Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem onClick={() => signOut()}>
                   Sign Out
                 </DropdownMenuItem>

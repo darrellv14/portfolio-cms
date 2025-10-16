@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { MessageSquarePlus } from "lucide-react";
+import { signIn, useSession } from "next-auth/react";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -15,6 +16,16 @@ import { AddTestimonialForm } from "./AddTestimonialForm";
 
 export const AddTestimonialDialog = () => {
   const [open, setOpen] = useState(false);
+  const { status } = useSession();
+
+  if (status !== "authenticated") {
+    return (
+      <Button variant="outline" onClick={() => signIn("google")}>
+        <MessageSquarePlus className="mr-2 h-4 w-4" />
+        Write Testimony
+      </Button>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

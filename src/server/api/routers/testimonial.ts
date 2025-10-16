@@ -7,19 +7,40 @@ import {
 } from "../trpc";
 
 export const testimonialRouter = createTRPCRouter({
-  getAllPublic: publicProcedure.query(({ ctx }) => {
-    return ctx.db.testimonial.findMany({
-      where: {
-        isApproved: true,
-      },
-      include: {
-        createdBy: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-  }),
+  getAllPublic: publicProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).default(6),
+        cursor: z.number().optional(), // `optional` lebih baik dari `nullish` di sini
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { limit, cursor } = input;
+      const items = await ctx.db.testimonial.findMany({
+        take: limit + 1,
+        where: {
+          isApproved: true,
+        },
+        cursor: cursor ? { id: cursor } : undefined,
+        include: {
+          createdBy: true,
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+      });
+
+      let nextCursor: number | undefined = undefined;
+      if (items.length > limit) {
+        const nextItem = items.pop();
+        nextCursor = nextItem!.id;
+      }
+
+      return {
+        items,
+        nextCursor,
+      };
+    }),
 
   getAllPending: adminProcedure.query(({ ctx }) => {
     return ctx.db.testimonial.findMany({

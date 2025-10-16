@@ -12,7 +12,7 @@ datasource db {
     // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
     // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
     url       = env("DATABASE_URL")
-    directUrl = env("DIRECT_URL")
+    directUrl = env("DATABASE_URL")
 }
 
 model Project {
@@ -42,6 +42,21 @@ model Testimonial {
     createdById String
 
     isApproved Boolean @default(false)
+}
+
+model Experience {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    title       String
+    company     String
+    dateRange   String
+    description String
+    logoUrl     String
+
+    createdBy   User   @relation(fields: [createdById], references: [id])
+    createdById String
 }
 
 model Account {
@@ -81,6 +96,7 @@ model User {
     sessions      Session[]
     projects      Project[]
     testimonials  Testimonial[]
+    experiences   Experience[]
 }
 
 model VerificationToken {
