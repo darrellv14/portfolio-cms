@@ -51,22 +51,7 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
  */
 export const createTRPCRouter = t.router;
 
-// ... (timingMiddleware tidak ada perubahan)
-const timingMiddleware = t.middleware(async ({ next, path }) => {
-  const start = Date.now();
-  if (t._config.isDev) {
-    const waitMs = Math.floor(Math.random() * 400) + 100;
-    await new Promise((resolve) => setTimeout(resolve, waitMs));
-  }
-  const result = await next();
-  const end = Date.now();
-  console.log(`[TRPC] ${path} took ${end - start}ms to execute`);
-  return result;
-});
-
-export const publicProcedure = t.procedure.use(timingMiddleware);
-
-// --- PERUBAHAN DIMULAI DI SINI ---
+export const publicProcedure = t.procedure;
 
 /**
  * Middleware untuk memastikan user sudah login.
@@ -85,12 +70,10 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
 /**
  * Protected (authenticated) procedure
  */
-export const protectedProcedure = t.procedure
-  .use(timingMiddleware)
-  .use(enforceUserIsAuthed);
+export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
 
 /**
- * 2. Buat middleware khusus untuk admin.
+ * Middleware khusus untuk admin.
  * Ini berjalan SETELAH user dipastikan login.
  */
 const adminMiddleware = t.middleware(({ ctx, next }) => {
@@ -108,9 +91,7 @@ const adminMiddleware = t.middleware(({ ctx, next }) => {
 });
 
 /**
- * 3. Buat dan ekspor adminProcedure.
+ * Buat dan ekspor adminProcedure.
  * Ini adalah gabungan dari protectedProcedure + adminMiddleware.
  */
 export const adminProcedure = protectedProcedure.use(adminMiddleware);
-
-// --- PERUBAHAN SELESAI ---
