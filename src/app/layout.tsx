@@ -38,9 +38,9 @@ export default function RootLayout({
             >
               <MotionLazyProvider>
                 <Navbar />
-                <main className="container mx-auto px-4 md:px-6">
-                  {children}
-                </main>
+                <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 2xl:max-w-[90rem]">
+                  <main>{children}</main>
+                </div>
                 <Toaster />
               </MotionLazyProvider>
             </ThemeProvider>

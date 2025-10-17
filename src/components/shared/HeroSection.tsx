@@ -64,7 +64,8 @@ export const HeroSection = () => {
         variants={containerVariants}
         className="relative isolate overflow-visible"
       >
-        <div className="container mx-auto mb-8 max-w-7xl px-4 py-8">
+        {/* Kelas container, mx-auto, max-w, dan px dihapus dari div ini */}
+        <div className="mb-8 py-8">
           <div className="grid grid-cols-1 items-center gap-10 md:gap-12 lg:grid-cols-12">
             {/* Kiri: copy & CTA */}
             <div className="lg:col-span-6">
@@ -111,8 +112,6 @@ export const HeroSection = () => {
                 experiences. I love React, TypeScript, and building robust
                 backends that just work.
               </m.p>
-
-              {/* Hapus avatar yang ada di sini */}
 
               {/* Tech badges */}
               <m.div

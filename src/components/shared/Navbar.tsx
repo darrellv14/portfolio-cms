@@ -170,7 +170,7 @@ export const Navbar = () => {
       className="bg-background/70 supports-[backdrop-filter]:bg-background/60 data-[scrolled=true]:bg-background/80 sticky top-0 z-50 border-b backdrop-blur transition-all duration-300 data-[scrolled=true]:shadow-sm"
     >
       <div
-        className="relative container mx-auto flex h-14 items-center justify-between px-8 transition-[height,padding] duration-300 data-[scrolled=true]:h-20 md:h-16 md:px-10 md:data-[scrolled=true]:h-18"
+        className="relative mx-auto flex h-14 w-full max-w-7xl items-center justify-between px-4 transition-[height] duration-300 data-[scrolled=true]:h-20 sm:px-6 md:h-16 md:data-[scrolled=true]:h-18 2xl:max-w-[90rem]"
         data-scrolled={scrolled}
       >
         <Link href="/" className="flex items-center">

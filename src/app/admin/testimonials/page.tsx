@@ -1,35 +1,14 @@
-"use client";
-
-import { useSession } from "next-auth/react";
-import { PendingTestimonialCard } from "~/components/shared/PendingTestimonialCard";
+import { Suspense } from "react";
 import { PendingTestimonialCardSkeleton } from "~/components/shared/PendingTestimonialCardSkeleton";
+import { PendingTestimonialList } from "~/components/shared/PendingTestimonialList";
+import { auth } from "~/server/auth";
+import { api } from "~/trpc/server";
 import { env } from "~/env";
-import { api } from "~/trpc/react";
 
-export default function AdminTestimonialsPage() {
-  const { data: session, status: sessionStatus } = useSession();
+export default async function AdminTestimonialsPage() {
+  const session = await auth();
 
-  const {
-    data: pendingTestimonials,
-    isLoading,
-    error,
-  } = api.testimonial.getAllPending.useQuery(undefined, {
-    enabled: session?.user.email === env.NEXT_PUBLIC_ADMIN_EMAIL,
-  });
-
-  if (sessionStatus === "loading") {
-    return (
-      <div className="space-y-6">
-        <h1 className="text-xl font-bold lg:text-4xl">Pending Testimonials</h1>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <PendingTestimonialCardSkeleton />
-          <PendingTestimonialCardSkeleton />
-        </div>
-      </div>
-    );
-  }
-
-  if (session?.user.email !== env.NEXT_PUBLIC_ADMIN_EMAIL) {
+  if (session?.user.email !== env.ADMIN_EMAIL) {
     return (
       <div className="flex h-60 items-center justify-center">
         <p className="text-destructive">Hey! No no yahh :D</p>
@@ -37,37 +16,24 @@ export default function AdminTestimonialsPage() {
     );
   }
 
-  if (error) {
-    return (
-      <div>
-        <p className="text-destructive">Error: {error.message}</p>
-      </div>
-    );
-  }
+  const initialPendingTestimonials = await api.testimonial.getAllPending();
 
   return (
-    <main className="container mx-auto space-y-12 px-4 py-8">
+    <main className="space-y-12 py-8">
       <h1 className="text-xl font-bold lg:text-4xl">Pending Testimonials</h1>
 
-      {isLoading ? (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <PendingTestimonialCardSkeleton />
-          <PendingTestimonialCardSkeleton />
-        </div>
-      ) : pendingTestimonials?.length === 0 ? (
-        <p className="text-muted-foreground">
-          There is no pending testimony right now.
-        </p>
-      ) : (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {pendingTestimonials?.map((testimonial) => (
-            <PendingTestimonialCard
-              key={testimonial.id}
-              testimonial={testimonial}
-            />
-          ))}
-        </div>
-      )}
+      <Suspense
+        fallback={
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <PendingTestimonialCardSkeleton />
+            <PendingTestimonialCardSkeleton />
+          </div>
+        }
+      >
+        <PendingTestimonialList
+          initialPendingTestimonials={initialPendingTestimonials}
+        />
+      </Suspense>
     </main>
   );
 }
