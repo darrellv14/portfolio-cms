@@ -21,6 +21,7 @@ import { env } from "~/env";
 
 const navLinks = [
   { href: "#about", label: "About Me" },
+  { href: "#experience", label: "Experiences" },
   { href: "#projects", label: "Projects" },
   { href: "#testimonials", label: "Testimonials" },
   { href: "#contact", label: "Contact" },
