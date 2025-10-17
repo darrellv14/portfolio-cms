@@ -1,19 +1,19 @@
 "use client";
-import { useState } from "react";
-import type { Prisma } from "@prisma/client";
-import Image from "next/image";
+
+import type { inferRouterOutputs } from "@trpc/server";
 import { motion } from "framer-motion";
+import Image from "next/image";
+import { useState } from "react";
+import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import type { AppRouter } from "~/server/api/root";
 import { DeleteProjectDialog } from "./DeleteProjectDialog";
 import { ProjectDialog } from "./ProjectDialog";
-import { Badge } from "~/components/ui/badge";
-
-type ProjectWithDetails = Prisma.ProjectGetPayload<{
-  include: { createdBy: true; tags: true };
-}>;
+type RouterOutput = inferRouterOutputs<AppRouter>;
+type ProjectListItem = RouterOutput["project"]["getAll"]["items"][number];
 
 interface ProjectCardProps {
-  project: ProjectWithDetails;
+  project: ProjectListItem;
   isAdmin: boolean;
 }
 
@@ -53,11 +53,11 @@ export const ProjectCard = ({ project, isAdmin }: ProjectCardProps) => {
         </h3>
 
         <p
-          key={project.id + (expanded ? "-expanded" : "-clamped")}
-          className={`text-foreground cursor-default text-justify text-sm leading-relaxed sm:text-base ${expanded ? "line-clamp-none" : "line-clamp-3"} `}
+          className={`text-foreground cursor-default text-justify text-sm leading-relaxed sm:text-base ${expanded ? "line-clamp-none" : "line-clamp-3"}`}
         >
           {project.description}
         </p>
+
         <div className="flex items-center justify-between">
           <Button
             variant="link"
@@ -68,14 +68,10 @@ export const ProjectCard = ({ project, isAdmin }: ProjectCardProps) => {
             {expanded ? "Show less" : "Read more"}
           </Button>
 
-          {project.tags && project.tags.length > 0 && (
+          {!!project.tags?.length && (
             <div className="mt-[0.15rem] flex flex-wrap gap-1.5">
               {project.tags.map((tag) => (
-                <Badge
-                  key={tag.id}
-                  variant="default"
-                  className="px-2 py-0.5 text-xs"
-                >
+                <Badge key={tag.id} className="px-2 py-0.5 text-xs">
                   {tag.name}
                 </Badge>
               ))}

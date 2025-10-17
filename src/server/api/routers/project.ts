@@ -6,12 +6,40 @@ import {
 } from "~/server/api/trpc";
 
 export const projectRouter = createTRPCRouter({
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.db.project.findMany({
-      orderBy: { createdAt: "desc" },
-      include: { createdBy: true, tags: true },
-    });
-  }),
+  getAll: publicProcedure
+    .input(
+      z
+        .object({
+          take: z.number().min(1).max(48).default(12),
+          cursor: z.number().optional(),
+        })
+        .optional(),
+    )
+    .query(async ({ ctx, input }) => {
+      const take = input?.take ?? 12;
+      const cursor = input?.cursor;
+
+      const rows = await ctx.db.project.findMany({
+        take: take + 1,
+        ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+        orderBy: { id: "desc" },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          imageURL: true,
+          tags: { select: { id: true, name: true } },
+        },
+      });
+
+      let nextCursor: number | undefined;
+      if (rows.length > take) {
+        const next = rows.pop()!;
+        nextCursor = next.id;
+      }
+
+      return { items: rows, nextCursor };
+    }),
 
   create: adminProcedure
     .input(
@@ -23,7 +51,7 @@ export const projectRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { title, description, imageURL, tags: tagsString } = input;
+      const { tags: tagsString } = input;
 
       const tagNames = tagsString
         ? tagsString

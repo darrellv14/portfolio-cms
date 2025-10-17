@@ -1,8 +1,7 @@
 "use client";
 
+import { Pencil, PlusCircle } from "lucide-react";
 import { useState } from "react";
-import { PlusCircle, Pencil } from "lucide-react";
-import type { inferRouterOutputs } from "@trpc/server";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -14,13 +13,14 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { ProjectForm } from "./ProjectForm";
-import type { AppRouter } from "~/server/api/root";
 
+import type { inferRouterOutputs } from "@trpc/server";
+import type { AppRouter } from "~/server/api/root";
 type RouterOutput = inferRouterOutputs<AppRouter>;
-type Project = RouterOutput["project"]["getAll"][number];
+type ProjectListItem = RouterOutput["project"]["getAll"]["items"][number];
 
 interface ProjectDialogProps {
-  project?: Project;
+  project?: ProjectListItem;
 }
 
 export const ProjectDialog = ({ project }: ProjectDialogProps) => {
@@ -41,6 +41,7 @@ export const ProjectDialog = ({ project }: ProjectDialogProps) => {
           </Button>
         )}
       </DialogTrigger>
+
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>
@@ -52,6 +53,7 @@ export const ProjectDialog = ({ project }: ProjectDialogProps) => {
               : "Fill in the details below to add a new project."}
           </DialogDescription>
         </DialogHeader>
+
         <ProjectForm
           onFormSubmit={() => setOpen(false)}
           initialData={project}

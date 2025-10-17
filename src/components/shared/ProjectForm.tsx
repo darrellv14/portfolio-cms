@@ -20,7 +20,7 @@ import { api } from "~/trpc/react";
 import type { AppRouter } from "~/server/api/root";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
-type Project = RouterOutput["project"]["getAll"][number];
+type ProjectListItem = RouterOutput["project"]["getAll"]["items"][number];
 
 const projectSchema = z.object({
   title: z.string().min(1, "Title is required."),
@@ -33,7 +33,7 @@ type ProjectFormValues = z.infer<typeof projectSchema>;
 
 interface ProjectFormProps {
   onFormSubmit: () => void;
-  initialData?: Project;
+  initialData?: ProjectListItem;
 }
 
 export const ProjectForm = ({
@@ -53,7 +53,10 @@ export const ProjectForm = ({
       title: initialData?.title ?? "",
       description: initialData?.description ?? "",
       imageURL: initialData?.imageURL ?? "",
-      tags: initialData?.tags?.map((tag) => tag.name).join(", ") ?? "",
+      tags:
+        initialData?.tags
+          ?.map((tag: { id: number; name: string }) => tag.name)
+          .join(", ") ?? "",
     },
   });
 

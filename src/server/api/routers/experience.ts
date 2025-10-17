@@ -5,7 +5,14 @@ export const experienceRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.db.experience.findMany({
       orderBy: { createdAt: "desc" },
-      include: { createdBy: true },
+      select: {
+        id: true,
+        title: true,
+        company: true,
+        dateRange: true,
+        description: true,
+        logoUrl: true,
+      },
     });
   }),
 

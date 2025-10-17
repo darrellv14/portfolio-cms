@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Menu, X } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
 
-import { Button } from "~/components/ui/button";
+import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,9 +16,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import Image from "next/image";
-import { DarkModeToggle } from "./DarkModeToggle";
 import { env } from "~/env";
+import { DarkModeToggle } from "./DarkModeToggle";
 
 const navLinks = [
   { href: "#hero", label: "About Me" },

@@ -24,6 +24,8 @@ model Project {
 
     createdBy   User   @relation(fields: [createdById], references: [id])
     createdById String
+
+    @@index([createdAt])
 }
 
 model Tag {
@@ -47,6 +49,8 @@ model Testimonial {
     createdById String
 
     isApproved Boolean @default(false)
+
+    @@index([isApproved, id])
 }
 
 model Experience {
@@ -62,6 +66,8 @@ model Experience {
 
     createdBy   User   @relation(fields: [createdById], references: [id])
     createdById String
+
+    @@index([createdAt])
 }
 
 model Account {

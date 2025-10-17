@@ -1,7 +1,8 @@
-import type { AppRouter } from "~/server/api/root";
 import type { inferRouterOutputs } from "@trpc/server";
 import { motion } from "framer-motion";
+import type { AppRouter } from "~/server/api/root";
 
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
   Card,
   CardContent,
@@ -9,17 +10,20 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
-type TestimonialWithUser =
+type TestimonialListItem =
   RouterOutput["testimonial"]["getAllPublic"]["items"][number];
 
 interface TestimonialCardProps {
-  testimonial: TestimonialWithUser;
+  testimonial: TestimonialListItem;
 }
 
 export function TestimonialCard({ testimonial }: TestimonialCardProps) {
+  const displayName =
+    testimonial.createdBy?.name ?? testimonial.title ?? "Anonymous";
+  const avatarSrc = testimonial.avatarURL || undefined;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
@@ -31,16 +35,13 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
       <Card className="flex h-full flex-col">
         <CardHeader className="flex flex-row items-center gap-4">
           <Avatar className="h-12 w-12">
-            <AvatarImage
-              src={testimonial.createdBy.image ?? ""}
-              alt={testimonial.createdBy.name ?? "User"}
-            />
+            <AvatarImage src={avatarSrc} alt={displayName} />
             <AvatarFallback>
-              {(testimonial.createdBy.name ?? "A").charAt(0).toUpperCase()}
+              {displayName.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1">
-            <CardTitle>{testimonial.createdBy.name ?? "Anonymous"}</CardTitle>
+            <CardTitle>{displayName}</CardTitle>
             <CardDescription>{testimonial.position}</CardDescription>
           </div>
         </CardHeader>

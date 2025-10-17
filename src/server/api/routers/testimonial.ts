@@ -11,35 +11,34 @@ export const testimonialRouter = createTRPCRouter({
     .input(
       z.object({
         limit: z.number().min(1).max(100).default(6),
-        cursor: z.number().optional(), // `optional` lebih baik dari `nullish` di sini
+        cursor: z.number().optional(),
       }),
     )
     .query(async ({ ctx, input }) => {
       const { limit, cursor } = input;
       const items = await ctx.db.testimonial.findMany({
         take: limit + 1,
-        where: {
-          isApproved: true,
-        },
-        cursor: cursor ? { id: cursor } : undefined,
-        include: {
-          createdBy: true,
-        },
-        orderBy: {
-          createdAt: "asc",
+        ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+        where: { isApproved: true },
+        orderBy: { id: "desc" },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          position: true,
+          avatarURL: true,
+          createdAt: true,
+          createdBy: { select: { id: true, name: true } },
         },
       });
 
       let nextCursor: number | undefined = undefined;
       if (items.length > limit) {
-        const nextItem = items.pop();
-        nextCursor = nextItem!.id;
+        const nextItem = items.pop()!;
+        nextCursor = nextItem.id;
       }
 
-      return {
-        items,
-        nextCursor,
-      };
+      return { items, nextCursor };
     }),
 
   getAllPending: adminProcedure.query(({ ctx }) => {

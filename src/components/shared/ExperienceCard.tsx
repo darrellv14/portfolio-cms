@@ -1,20 +1,24 @@
 "use client";
 
-import { useState } from "react";
-import type { Prisma } from "@prisma/client";
-import Image from "next/image";
 import { m } from "framer-motion";
+import Image from "next/image";
+import { useState } from "react";
+import { cn } from "~/lib/utils";
 import { Button } from "../ui/button";
 import { DeleteExperienceDialog } from "./DeleteExperienceDialog";
 import { ExperienceDialog } from "./ExperienceDialog";
-import { cn } from "~/lib/utils";
 
-type ExperienceWithUser = Prisma.ExperienceGetPayload<{
-  include: { createdBy: true };
-}>;
+type ExperienceListItem = {
+  id: number;
+  title: string;
+  company: string;
+  dateRange: string;
+  description: string;
+  logoUrl: string;
+};
 
 interface ExperienceCardProps {
-  experience: ExperienceWithUser;
+  experience: ExperienceListItem;
   isAdmin: boolean;
   index: number;
 }

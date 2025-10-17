@@ -1,13 +1,13 @@
-import "~/styles/globals.css";
 import { type Metadata } from "next";
 import { Lexend } from "next/font/google";
+import "~/styles/globals.css";
 
 import { SessionProvider } from "next-auth/react";
-import { TRPCReactProvider } from "~/trpc/react";
-import { Navbar } from "~/components/shared/Navbar";
-import { Toaster } from "~/components/ui/sonner";
-import { ThemeProvider } from "~/components/theme-provider";
 import { MotionLazyProvider } from "~/components/providers/MotionLazyProvider";
+import { Navbar } from "~/components/shared/Navbar";
+import { ThemeProvider } from "~/components/theme-provider";
+import { Toaster } from "~/components/ui/sonner";
+import { TRPCReactProvider } from "~/trpc/react";
 
 export const metadata: Metadata = {
   title: "Darrell's Portfolio",

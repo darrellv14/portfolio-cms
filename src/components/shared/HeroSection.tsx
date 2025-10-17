@@ -1,17 +1,17 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import { m, LazyMotion, domAnimation, type Variants } from "framer-motion";
-import { Button } from "~/components/ui/button";
+import { LazyMotion, domAnimation, m, type Variants } from "framer-motion";
 import {
-  Github,
-  Linkedin,
-  Instagram,
-  FileDown,
   Briefcase,
+  FileDown,
+  Github,
+  Instagram,
+  Linkedin,
   Sparkles,
 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "~/components/ui/button";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
