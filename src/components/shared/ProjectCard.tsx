@@ -1,8 +1,5 @@
-// src/components/shared/ProjectCard.tsx
-
 "use client";
 import { useState } from "react";
-// 1. Perbarui tipe agar menyertakan 'tags'
 import type { Prisma } from "@prisma/client";
 import Image from "next/image";
 import { motion } from "framer-motion";

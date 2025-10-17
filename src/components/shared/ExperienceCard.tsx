@@ -67,7 +67,7 @@ export const ExperienceCard = ({
           <h3 className="text-base font-semibold md:text-lg">
             {experience.title} at {experience.company}
           </h3>
-          <p className="text-muted-foreground mb-1 text-sm font-medium md:mb-0 md:text-base">
+          <p className="text-foreground mb-1 text-sm font-medium md:mb-0 md:text-base">
             {experience.dateRange}
           </p>
         </div>
