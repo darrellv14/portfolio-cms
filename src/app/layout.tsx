@@ -11,7 +11,7 @@ import { ThemeProvider } from "~/components/theme-provider";
 import { MotionLazyProvider } from "~/components/providers/MotionLazyProvider";
 
 export const metadata: Metadata = {
-  title: "Delvin's Portfolio",
+  title: "Darrell's Portfolio",
   description: "My Personal Portfolio",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };

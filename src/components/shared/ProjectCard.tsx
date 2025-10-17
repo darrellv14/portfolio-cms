@@ -48,13 +48,13 @@ export const ProjectCard = ({ project, isAdmin }: ProjectCardProps) => {
         layout
         className="from-background/90 via-background/50 absolute inset-0 flex flex-col justify-end bg-gradient-to-t to-transparent p-4 md:p-6"
       >
-        <h3 className="text-foreground text-lg font-semibold sm:text-xl">
+        <h3 className="text-foreground cursor-default text-lg font-semibold sm:text-xl">
           {project.title}
         </h3>
 
         <p
           key={project.id + (expanded ? "-expanded" : "-clamped")}
-          className={`text-foreground text-justify text-sm leading-relaxed sm:text-base ${expanded ? "line-clamp-none" : "line-clamp-3"} `}
+          className={`text-foreground cursor-default text-justify text-sm leading-relaxed sm:text-base ${expanded ? "line-clamp-none" : "line-clamp-3"} `}
         >
           {project.description}
         </p>

@@ -111,7 +111,7 @@ export default function HomePage() {
         <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex-1 space-y-2">
             <h1 className="text-xl font-bold 2xl:text-4xl">Work Experience</h1>
-            <p className="text-muted-foreground text-justify text-sm leading-relaxed font-normal tracking-wide lg:text-xl">
+            <p className="text-muted-foreground text-justify text-sm leading-relaxed font-normal tracking-wide lg:text-lg 2xl:text-xl">
               My professional journey and key roles I&apos;ve undertaken in the
               tech industry.
             </p>
@@ -147,7 +147,7 @@ export default function HomePage() {
             </div>
           )}
 
-          <p className="text-muted-foreground col-span-2 text-justify text-sm leading-relaxed font-normal tracking-wide lg:text-xl">
+          <p className="text-muted-foreground col-span-2 text-justify text-sm leading-relaxed font-normal tracking-wide lg:text-lg 2xl:text-xl">
             This section showcases all of Darrell&apos;s project, mainly
             focusing on Web Development, Software Engineering, and Fullstack
             Developer.
@@ -175,7 +175,7 @@ export default function HomePage() {
         <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex-1 space-y-2">
             <h1 className="text-xl font-bold 2xl:text-4xl">Testimonials</h1>
-            <p className="text-muted-foreground text-justify text-sm leading-relaxed font-normal tracking-wide lg:text-xl">
+            <p className="text-muted-foreground text-justify text-sm leading-relaxed font-normal tracking-wide lg:text-lg 2xl:text-xl">
               What people say about working with me. Feel free to leave one!
             </p>
           </div>
