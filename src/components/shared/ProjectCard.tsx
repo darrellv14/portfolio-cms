@@ -1,18 +1,22 @@
+// src/components/shared/ProjectCard.tsx
+
 "use client";
 import { useState } from "react";
+// 1. Perbarui tipe agar menyertakan 'tags'
 import type { Prisma } from "@prisma/client";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Button } from "~/components/ui/button";
 import { DeleteProjectDialog } from "./DeleteProjectDialog";
 import { ProjectDialog } from "./ProjectDialog";
+import { Badge } from "~/components/ui/badge";
 
-type ProjectWithUser = Prisma.ProjectGetPayload<{
-  include: { createdBy: true };
+type ProjectWithDetails = Prisma.ProjectGetPayload<{
+  include: { createdBy: true; tags: true };
 }>;
 
 interface ProjectCardProps {
-  project: ProjectWithUser;
+  project: ProjectWithDetails;
   isAdmin: boolean;
 }
 
@@ -27,7 +31,6 @@ export const ProjectCard = ({ project, isAdmin }: ProjectCardProps) => {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="group bg-card text-card-foreground relative overflow-hidden rounded-xl border shadow-sm transition-all duration-300 hover:shadow-lg"
     >
-      {/* Admin Buttons */}
       {isAdmin && (
         <div className="bg-card/80 absolute top-2 right-2 z-20 flex gap-1 rounded-md opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100">
           <ProjectDialog project={project} />
@@ -35,7 +38,6 @@ export const ProjectCard = ({ project, isAdmin }: ProjectCardProps) => {
         </div>
       )}
 
-      {/* Image */}
       <div className="relative h-72 w-full md:h-80">
         <Image
           src={project.imageURL}
@@ -45,7 +47,6 @@ export const ProjectCard = ({ project, isAdmin }: ProjectCardProps) => {
         />
       </div>
 
-      {/* Overlay */}
       <motion.div
         layout
         className="from-background/90 via-background/50 absolute inset-0 flex flex-col justify-end bg-gradient-to-t to-transparent p-4 md:p-6"
@@ -54,7 +55,20 @@ export const ProjectCard = ({ project, isAdmin }: ProjectCardProps) => {
           {project.title}
         </h3>
 
-        {/* Deskripsi */}
+        {project.tags && project.tags.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {project.tags.map((tag) => (
+              <Badge
+                key={tag.id}
+                variant="secondary"
+                className="px-2 py-0.5 text-xs"
+              >
+                {tag.name}
+              </Badge>
+            ))}
+          </div>
+        )}
+
         <motion.div
           layout
           initial={{ maxHeight: "3rem" }}

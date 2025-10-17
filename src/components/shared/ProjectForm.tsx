@@ -26,6 +26,7 @@ const projectSchema = z.object({
   title: z.string().min(1, "Title is required."),
   description: z.string().min(1, "Description is required."),
   imageURL: z.string().url("Please enter a valid URL."),
+  tags: z.string().optional(),
 });
 
 type ProjectFormValues = z.infer<typeof projectSchema>;
@@ -48,7 +49,12 @@ export const ProjectForm = ({
     formState: { errors },
   } = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
-    defaultValues: initialData ?? {},
+    defaultValues: {
+      title: initialData?.title ?? "",
+      description: initialData?.description ?? "",
+      imageURL: initialData?.imageURL ?? "",
+      tags: initialData?.tags?.map((tag) => tag.name).join(", ") ?? "",
+    },
   });
 
   const utils = api.useUtils();
@@ -102,6 +108,15 @@ export const ProjectForm = ({
             {errors.description && (
               <FieldError>{errors.description.message}</FieldError>
             )}
+          </Field>
+
+          <Field>
+            <FieldLabel>Tags (pisahkan dengan koma)</FieldLabel>
+            <Input
+              {...register("tags")}
+              placeholder="e.g., React, Next.js, Tailwind CSS"
+            />
+            {errors.tags && <FieldError>{errors.tags.message}</FieldError>}
           </Field>
 
           <Field>

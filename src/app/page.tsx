@@ -59,8 +59,9 @@ export default function HomePage() {
     return (
       <main className="container mx-auto space-y-12 px-4 py-8">
         <section className="space-y-6">
-          <h1 className="text-xl font-bold lg:text-4xl">My Experience</h1>
+          <h1 className="text-xl font-bold lg:text-4xl">Work Experience</h1>
           <div className="flex flex-col gap-6">
+            <ExperienceCardSkeleton />
             <ExperienceCardSkeleton />
             <ExperienceCardSkeleton />
           </div>
