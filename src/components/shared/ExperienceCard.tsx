@@ -7,6 +7,7 @@ import { m } from "framer-motion";
 import { Button } from "../ui/button";
 import { DeleteExperienceDialog } from "./DeleteExperienceDialog";
 import { ExperienceDialog } from "./ExperienceDialog";
+import { cn } from "~/lib/utils";
 
 type ExperienceWithUser = Prisma.ExperienceGetPayload<{
   include: { createdBy: true };
@@ -15,13 +16,17 @@ type ExperienceWithUser = Prisma.ExperienceGetPayload<{
 interface ExperienceCardProps {
   experience: ExperienceWithUser;
   isAdmin: boolean;
+  index: number;
 }
 
 export const ExperienceCard = ({
   experience,
   isAdmin,
+  index,
 }: ExperienceCardProps) => {
   const [expanded, setExpanded] = useState(false);
+
+  const isEven = index % 2 === 1;
 
   return (
     <m.div
@@ -29,9 +34,15 @@ export const ExperienceCard = ({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="bg-card text-card-foreground flex flex-col items-start gap-4 rounded-lg border p-4 transition-shadow hover:shadow-md md:flex-row md:items-center md:space-x-4 md:p-6"
+      className="bg-card text-card-foreground flex w-full flex-col gap-4 rounded-lg border p-4 transition-shadow hover:shadow-md md:flex-row md:items-center md:gap-6 md:p-6"
     >
-      <div className="relative mx-auto h-20 w-20 flex-shrink-0 md:mx-0 md:h-16 md:w-16">
+      {/* Logo Perusahaan */}
+      <div
+        className={cn(
+          "relative mx-auto h-20 w-20 flex-shrink-0 md:mx-0 md:h-16 md:w-16",
+          isEven && "md:order-3",
+        )}
+      >
         <Image
           src={experience.logoUrl}
           alt={`${experience.company} logo`}
@@ -40,20 +51,32 @@ export const ExperienceCard = ({
         />
       </div>
 
-      <div className="flex-1 space-y-2 text-center md:text-left">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+      {/* Konten Utama (Judul, Tanggal, Deskripsi) */}
+      <div
+        className={cn(
+          "flex-1 space-y-2 text-center md:text-left",
+          isEven && "md:order-2",
+        )}
+      >
+        <div
+          className={cn(
+            "flex flex-col-reverse md:flex-row md:items-center md:justify-between",
+            isEven && "md:flex-row-reverse",
+          )}
+        >
           <h3 className="text-base font-semibold md:text-lg">
             {experience.title} at {experience.company}
           </h3>
-          <p className="text-foreground mt-1 text-sm font-semibold md:mt-0 md:text-base">
+          <p className="text-muted-foreground mb-1 text-sm font-medium md:mb-0 md:text-base">
             {experience.dateRange}
           </p>
         </div>
 
+        {/* Deskripsi */}
         <div className="text-muted-foreground text-justify text-sm leading-relaxed md:text-base">
           <p
             className={`transition-all duration-300 ${
-              expanded ? "" : "line-clamp-3"
+              expanded ? "" : "line-clamp-3 md:line-clamp-none"
             }`}
           >
             {experience.description}
@@ -72,8 +95,14 @@ export const ExperienceCard = ({
         </div>
       </div>
 
+      {/* Tombol Admin */}
       {isAdmin && (
-        <div className="ml-auto flex shrink-0 self-start md:self-center">
+        <div
+          className={cn(
+            "ml-auto flex shrink-0 self-start md:self-center",
+            isEven && "md:order-1",
+          )}
+        >
           <ExperienceDialog experience={experience} />
           <DeleteExperienceDialog experienceId={experience.id} />
         </div>

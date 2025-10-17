@@ -38,7 +38,7 @@ export const ProjectCard = ({ project, isAdmin }: ProjectCardProps) => {
         </div>
       )}
 
-      <div className="relative h-72 w-full md:h-80">
+      <div className="relative h-84 w-full md:h-86">
         <Image
           src={project.imageURL}
           alt={project.title}
@@ -55,38 +55,36 @@ export const ProjectCard = ({ project, isAdmin }: ProjectCardProps) => {
           {project.title}
         </h3>
 
-        {project.tags && project.tags.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {project.tags.map((tag) => (
-              <Badge
-                key={tag.id}
-                variant="secondary"
-                className="px-2 py-0.5 text-xs"
-              >
-                {tag.name}
-              </Badge>
-            ))}
-          </div>
-        )}
-
-        <motion.div
-          layout
-          initial={{ maxHeight: "3rem" }}
-          animate={{ maxHeight: expanded ? "200px" : "3rem" }}
-          transition={{ duration: 0.4, ease: "easeInOut" }}
-          className="text-foreground overflow-hidden text-justify text-sm leading-relaxed sm:text-base"
+        <p
+          key={project.id + (expanded ? "-expanded" : "-clamped")}
+          className={`text-foreground text-justify text-sm leading-relaxed sm:text-base ${expanded ? "line-clamp-none" : "line-clamp-3"} `}
         >
           {project.description}
-        </motion.div>
+        </p>
+        <div className="flex items-center justify-between">
+          <Button
+            variant="link"
+            size="sm"
+            className="text-primary hover:text-accent-foreground mt-1 h-auto self-start p-0 font-medium"
+            onClick={() => setExpanded(!expanded)}
+          >
+            {expanded ? "Show less" : "Read more"}
+          </Button>
 
-        <Button
-          variant="link"
-          size="sm"
-          className="text-primary hover:text-accent-foreground mt-1 h-auto self-start p-0 font-medium"
-          onClick={() => setExpanded(!expanded)}
-        >
-          {expanded ? "Show less" : "Read more"}
-        </Button>
+          {project.tags && project.tags.length > 0 && (
+            <div className="mt-[0.15rem] flex flex-wrap gap-1.5">
+              {project.tags.map((tag) => (
+                <Badge
+                  key={tag.id}
+                  variant="default"
+                  className="px-2 py-0.5 text-xs"
+                >
+                  {tag.name}
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
       </motion.div>
     </motion.div>
   );

@@ -63,7 +63,7 @@ export const projectRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { id, title, description, imageURL, tags: tagsString } = input;
+      const { tags: tagsString } = input;
 
       const tagNames = tagsString
         ? tagsString

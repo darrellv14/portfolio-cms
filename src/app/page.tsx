@@ -59,7 +59,7 @@ export default function HomePage() {
     return (
       <main className="container mx-auto space-y-12 px-4 py-8">
         <section className="space-y-6">
-          <h1 className="text-xl font-bold lg:text-4xl">Work Experience</h1>
+          <h1 className="text-xl font-bold 2xl:text-4xl">Work Experience</h1>
           <div className="flex flex-col gap-6">
             <ExperienceCardSkeleton />
             <ExperienceCardSkeleton />
@@ -70,7 +70,7 @@ export default function HomePage() {
         <Separator />
 
         <section className="space-y-6">
-          <h1 className="text-xl font-bold lg:text-4xl">My Projects</h1>
+          <h1 className="text-xl font-bold 2xl:text-4xl">My Projects</h1>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             <ProjectCardSkeleton />
             <ProjectCardSkeleton />
@@ -81,7 +81,7 @@ export default function HomePage() {
         <Separator />
 
         <section className="space-y-6">
-          <h1 className="text-xl font-bold lg:text-4xl">Testimonials</h1>
+          <h1 className="text-xl font-bold 2xl:text-4xl">Testimonials</h1>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             <TestimonialCardSkeleton />
             <TestimonialCardSkeleton />
@@ -110,7 +110,7 @@ export default function HomePage() {
       <section id="experience" className="space-y-6">
         <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex-1 space-y-2">
-            <h1 className="text-xl font-bold lg:text-4xl">Work Experience</h1>
+            <h1 className="text-xl font-bold 2xl:text-4xl">Work Experience</h1>
             <p className="text-muted-foreground text-justify text-sm leading-relaxed font-normal tracking-wide lg:text-xl">
               My professional journey and key roles I&apos;ve undertaken in the
               tech industry.
@@ -124,11 +124,12 @@ export default function HomePage() {
           </p>
         ) : (
           <div className="flex flex-col gap-6">
-            {experiences?.map((experience) => (
+            {experiences?.map((experience, index) => (
               <ExperienceCard
                 key={experience.id}
                 experience={experience}
                 isAdmin={isAdmin}
+                index={index}
               />
             ))}
           </div>
@@ -139,16 +140,14 @@ export default function HomePage() {
 
       <section id="projects" className="space-y-6">
         <div className="grid grid-cols-[1fr_auto] items-start gap-3">
-          <h1 className="text-xl font-bold sm:text-2xl lg:text-4xl">
-            My Projects
-          </h1>
+          <h1 className="text-xl font-bold 2xl:text-4xl">My Projects</h1>
           {isAdmin && (
             <div className="justify-self-end">
               <ProjectDialog />
             </div>
           )}
 
-          <p className="text-muted-foreground col-span-2 text-justify text-sm leading-relaxed font-normal tracking-wide sm:text-base lg:text-xl">
+          <p className="text-muted-foreground col-span-2 text-justify text-sm leading-relaxed font-normal tracking-wide lg:text-xl">
             This section showcases all of Darrell&apos;s project, mainly
             focusing on Web Development, Software Engineering, and Fullstack
             Developer.
@@ -175,7 +174,7 @@ export default function HomePage() {
       <section id="testimonials" className="space-y-6">
         <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex-1 space-y-2">
-            <h1 className="text-xl font-bold lg:text-4xl">Testimonials</h1>
+            <h1 className="text-xl font-bold 2xl:text-4xl">Testimonials</h1>
             <p className="text-muted-foreground text-justify text-sm leading-relaxed font-normal tracking-wide lg:text-xl">
               What people say about working with me. Feel free to leave one!
             </p>
