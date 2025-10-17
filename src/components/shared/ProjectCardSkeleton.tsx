@@ -2,26 +2,41 @@ import { Skeleton } from "~/components/ui/skeleton";
 
 export const ProjectCardSkeleton = () => {
   return (
-    <div className="bg-card text-card-foreground relative animate-pulse overflow-hidden rounded-xl border shadow-sm">
-      {/* Image placeholder */}
-      <div className="relative h-60 w-full sm:h-72 md:h-80">
-        <Skeleton className="bg-muted/60 dark:bg-muted/30 absolute inset-0 h-full w-full" />
+    <div className="group bg-card text-card-foreground relative overflow-hidden rounded-xl border shadow-sm transition-all duration-300">
+      {/* Admin buttons placeholder (optional) */}
+      <div className="absolute top-2 right-2 z-20 flex gap-1 opacity-0">
+        <Skeleton className="h-8 w-8 rounded-md" />
+        <Skeleton className="h-8 w-8 rounded-md" />
       </div>
 
-      {/* Overlay skeleton */}
-      <div className="from-background/95 via-background/70 absolute inset-0 flex flex-col justify-end bg-gradient-to-t to-transparent p-4 md:p-6">
+      {/* Image placeholder */}
+      <div className="relative h-84 w-full md:h-86">
+        <Skeleton className="absolute inset-0 h-full w-full" />
+      </div>
+
+      {/* Content overlay */}
+      <div className="from-background/90 via-background/50 absolute inset-0 flex flex-col justify-end bg-gradient-to-t to-transparent p-4 md:p-6">
         {/* Title placeholder */}
-        <Skeleton className="bg-muted/70 dark:bg-muted/40 mb-3 h-5 w-3/4 rounded" />
+        <Skeleton className="mb-3 h-6 w-2/3 rounded" />
 
         {/* Description lines */}
         <div className="space-y-2">
-          <Skeleton className="bg-muted/60 dark:bg-muted/30 h-4 w-full rounded" />
-          <Skeleton className="bg-muted/60 dark:bg-muted/30 h-4 w-5/6 rounded" />
-          <Skeleton className="bg-muted/60 dark:bg-muted/30 hidden h-4 w-4/6 rounded md:block" />
+          <Skeleton className="h-4 w-full rounded" />
+          <Skeleton className="h-4 w-5/6 rounded" />
+          <Skeleton className="h-4 w-4/5 rounded" />
         </div>
 
-        {/* Read more placeholder */}
-        <Skeleton className="bg-primary/40 dark:bg-primary/30 mt-3 h-3 w-16 rounded" />
+        {/* Read more + Badges row */}
+        <div className="mt-3 flex items-center justify-between">
+          <Skeleton className="h-4 w-20 rounded" />
+
+          {/* Tags placeholder */}
+          <div className="flex flex-wrap gap-1.5">
+            <Skeleton className="h-5 w-12 rounded-full" />
+            <Skeleton className="h-5 w-14 rounded-full" />
+            <Skeleton className="h-5 w-10 rounded-full" />
+          </div>
+        </div>
       </div>
     </div>
   );

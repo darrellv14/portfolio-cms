@@ -62,11 +62,8 @@ export const HeroSection = () => {
         initial="hidden"
         animate="visible"
         variants={containerVariants}
-        // isolate: supaya efek lokal (conic glow) tidak tercampur layer global
-        className="relative isolate overflow-visible py-10 md:py-12 lg:py-20"
+        className="relative isolate overflow-visible"
       >
-        {/* Tidak ada background di sini—pakai GlobalBackground dari layout */}
-
         <div className="container mx-auto max-w-7xl px-4">
           <div className="grid grid-cols-1 items-center gap-10 md:gap-12 lg:grid-cols-12">
             {/* Kiri: copy & CTA */}
@@ -97,10 +94,28 @@ export const HeroSection = () => {
                 backends that just work.
               </m.p>
 
+              {/* === Avatar khusus mobile: tepat di bawah paragraf, sebelum badges/CTA === */}
+              <m.div
+                variants={itemVariants}
+                className="mt-6 flex justify-center md:hidden"
+              >
+                <div className="relative h-44 w-44 sm:h-52 sm:w-52">
+                  <div className="from-primary/40 to-secondary/40 absolute -inset-2 -z-10 rounded-full bg-gradient-to-br opacity-50 blur-2xl" />
+                  <Image
+                    src="https://jhoniananta.com/_next/image?url=%2Fimages%2Fhero%2Ffoto-jhoni-porto.png&w=1920&q=75"
+                    alt="Darrell's Profile Picture"
+                    fill
+                    priority
+                    className="rounded-full object-cover shadow-2xl"
+                    sizes="(max-width: 768px) 220px"
+                  />
+                </div>
+              </m.div>
+
               {/* Tech badges */}
               <m.div
                 variants={itemVariants}
-                className="mt-5 flex flex-wrap gap-2"
+                className="mt-5 flex flex-wrap justify-center gap-2 md:justify-start"
               >
                 {["React", "Next.js", "TypeScript", "Tailwind"].map((t) => (
                   <span
@@ -115,7 +130,7 @@ export const HeroSection = () => {
               {/* CTAs + socials */}
               <m.div
                 variants={itemVariants}
-                className="mt-6 flex flex-wrap items-center gap-4"
+                className="mt-6 flex flex-wrap items-center justify-center gap-4 md:justify-start"
               >
                 <Button
                   asChild
@@ -152,9 +167,8 @@ export const HeroSection = () => {
               </m.div>
             </div>
 
-            {/* Kanan: visual */}
-            <div className="relative lg:col-span-6">
-              {/* Conic glow halus di belakang avatar */}
+            {/* Kanan: visual (hidden di mobile, tampil di md+) */}
+            <div className="relative hidden md:block lg:col-span-6">
               <div
                 aria-hidden
                 className="absolute -inset-8 -z-10 rounded-[3rem] opacity-70 blur-2xl"

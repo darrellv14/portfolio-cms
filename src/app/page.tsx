@@ -16,6 +16,7 @@ import { ExperienceDialog } from "~/components/shared/ExperienceDialog";
 import { ExperienceCard } from "~/components/shared/ExperienceCard";
 import { ExperienceCardSkeleton } from "~/components/shared/ExperienceCardSkeleton";
 import { HeroSection } from "~/components/shared/HeroSection";
+import { HeroSectionSkeleton } from "~/components/shared/HeroSectionSkeleton";
 
 export default function HomePage() {
   const {
@@ -38,18 +39,12 @@ export default function HomePage() {
     hasNextPage,
     isFetchingNextPage,
   } = api.testimonial.getAllPublic.useInfiniteQuery(
-    {
-      limit: 3,
-    },
-    {
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-    },
+    { limit: 3 },
+    { getNextPageParam: (lastPage) => lastPage.nextCursor },
   );
 
   const { data: session } = useSession();
-
   const isAdmin = session?.user.email === env.NEXT_PUBLIC_ADMIN_EMAIL;
-
   const allTestimonials = testimonialsData?.pages.flatMap((page) => page.items);
 
   if (
@@ -58,60 +53,79 @@ export default function HomePage() {
     (isTestimonialsLoading && !allTestimonials)
   ) {
     return (
-      <main className="container mx-auto space-y-12 px-4 py-8">
-        <section className="space-y-6">
-          <h1 className="text-2xl font-bold 2xl:text-4xl">Work Experience</h1>
-          <div className="flex flex-col gap-6">
-            <ExperienceCardSkeleton />
-            <ExperienceCardSkeleton />
-            <ExperienceCardSkeleton />
-          </div>
+      <>
+        <section id="hero" className="mb-12 scroll-mt-24 md:scroll-mt-28">
+          <HeroSectionSkeleton />
         </section>
 
-        <Separator />
+        <main className="container mx-auto space-y-12 px-4 py-8">
+          <section className="space-y-6">
+            <h1 className="text-2xl font-bold 2xl:text-4xl">Work Experience</h1>
+            <div className="flex flex-col gap-6">
+              <ExperienceCardSkeleton />
+              <ExperienceCardSkeleton />
+              <ExperienceCardSkeleton />
+            </div>
+          </section>
 
-        <section className="space-y-6">
-          <h1 className="text-2xl font-bold 2xl:text-4xl">My Projects</h1>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <ProjectCardSkeleton />
-            <ProjectCardSkeleton />
-            <ProjectCardSkeleton />
-          </div>
-        </section>
+          <Separator />
 
-        <Separator />
+          <section className="space-y-6">
+            <h1 className="text-2xl font-bold 2xl:text-4xl">My Projects</h1>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <ProjectCardSkeleton />
+              <ProjectCardSkeleton />
+              <ProjectCardSkeleton />
+            </div>
+          </section>
 
-        <section className="space-y-6">
-          <h1 className="text-2xl font-bold 2xl:text-4xl">Testimonials</h1>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <TestimonialCardSkeleton />
-            <TestimonialCardSkeleton />
-            <TestimonialCardSkeleton />
-          </div>
-        </section>
-      </main>
+          <Separator />
+
+          <section className="space-y-6">
+            <h1 className="text-2xl font-bold 2xl:text-4xl">Testimonials</h1>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <TestimonialCardSkeleton />
+              <TestimonialCardSkeleton />
+              <TestimonialCardSkeleton />
+            </div>
+          </section>
+        </main>
+      </>
     );
   }
 
   if (projectsError || testimonialsError || experiencesError) {
     return (
-      <main className="container mx-auto p-4">
-        <p className="text-destructive">
-          Error loading data:{" "}
-          {projectsError?.message ??
-            testimonialsError?.message ??
-            experiencesError?.message}
-        </p>
-      </main>
+      <>
+        <section id="hero" className="mb-12 scroll-mt-24 md:scroll-mt-28">
+          <HeroSectionSkeleton />
+        </section>
+
+        <main className="container mx-auto p-4">
+          <p className="text-destructive">
+            Error loading data:{" "}
+            {projectsError?.message ??
+              testimonialsError?.message ??
+              experiencesError?.message}
+          </p>
+        </main>
+      </>
     );
   }
 
   return (
     <>
-      <HeroSection />
+      <section id="hero" className="mb-12 scroll-mt-24 md:scroll-mt-28">
+        <HeroSection />
+      </section>
+
       <Separator />
+
       <main className="container mx-auto space-y-12 px-4 py-8">
-        <section id="experience" className="space-y-6">
+        <section
+          id="experience"
+          className="scroll-mt-24 space-y-6 md:scroll-mt-28"
+        >
           <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex-1 space-y-2">
               <h1 className="text-2xl font-bold 2xl:text-4xl">
@@ -124,6 +138,7 @@ export default function HomePage() {
             </div>
             {isAdmin && <ExperienceDialog />}
           </div>
+
           {experiences?.length === 0 ? (
             <p className="text-muted-foreground">
               No experience yet! Coming soon.
@@ -144,7 +159,10 @@ export default function HomePage() {
 
         <Separator />
 
-        <section id="projects" className="space-y-6">
+        <section
+          id="projects"
+          className="scroll-mt-24 space-y-6 md:scroll-mt-28"
+        >
           <div className="grid grid-cols-[1fr_auto] items-start gap-3">
             <h1 className="text-2xl font-bold 2xl:text-4xl">My Projects</h1>
             {isAdmin && (
@@ -179,7 +197,10 @@ export default function HomePage() {
 
         <Separator />
 
-        <section id="testimonials" className="space-y-6">
+        <section
+          id="testimonials"
+          className="scroll-mt-24 space-y-6 md:scroll-mt-28"
+        >
           <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex-1 space-y-2">
               <h1 className="text-2xl font-bold 2xl:text-4xl">Testimonials</h1>
@@ -189,6 +210,7 @@ export default function HomePage() {
             </div>
             {!isAdmin && <AddTestimonialDialog />}
           </div>
+
           {allTestimonials?.length === 0 ? (
             <p className="text-muted-foreground">
               Be the first to leave a testimonial!
@@ -203,6 +225,7 @@ export default function HomePage() {
                   />
                 ))}
               </div>
+
               {hasNextPage && (
                 <div className="mt-8 flex justify-center">
                   <Button
@@ -216,6 +239,9 @@ export default function HomePage() {
             </>
           )}
         </section>
+
+        {/* Contact nanti aja; id disiapkan untuk future-proof */}
+        {/* <section id="contact" className="scroll-mt-24 md:scroll-mt-28">...</section> */}
       </main>
     </>
   );
