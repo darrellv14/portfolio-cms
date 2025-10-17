@@ -53,7 +53,11 @@ export const ProjectCard = ({ project, isAdmin }: ProjectCardProps) => {
         </h3>
 
         <p
-          className={`text-foreground cursor-default text-justify text-sm leading-relaxed sm:text-base ${expanded ? "line-clamp-none" : "line-clamp-3"}`}
+          className={`text-foreground cursor-default text-justify text-sm leading-relaxed sm:text-base transition-all ${
+            expanded
+              ? "line-clamp-none bg-background/50 backdrop-blur-md rounded-md px-3 py-2"
+              : "line-clamp-3"
+          }`}
         >
           {project.description}
         </p>
