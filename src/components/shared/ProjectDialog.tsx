@@ -37,7 +37,7 @@ export const ProjectDialog = ({ project }: ProjectDialogProps) => {
         ) : (
           <Button className="font-bold">
             <PlusCircle className="mr-2 h-4 w-4" />
-            Add New Project
+            Add Project
           </Button>
         )}
       </DialogTrigger>
