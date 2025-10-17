@@ -64,7 +64,7 @@ export const HeroSection = () => {
         variants={containerVariants}
         className="relative isolate overflow-visible"
       >
-        <div className="container mx-auto max-w-7xl px-4">
+        <div className="container mx-auto mb-8 max-w-7xl px-4 py-8">
           <div className="grid grid-cols-1 items-center gap-10 md:gap-12 lg:grid-cols-12">
             {/* Kiri: copy & CTA */}
             <div className="lg:col-span-6">
@@ -73,10 +73,28 @@ export const HeroSection = () => {
                 className="text-4xl font-bold tracking-tight text-balance md:text-5xl lg:text-6xl"
               >
                 Hi, I&apos;m{" "}
-                <span className="from-primary to-secondary bg-gradient-to-r bg-clip-text text-transparent">
+                <span className="from-primary to-secondary text-primary/30 bg-gradient-to-r bg-clip-text">
                   Darrell Valentino
                 </span>
               </m.h1>
+
+              {/* === Pindahkan Avatar di mobile: tepat di bawah h1, sebelum judul posisi === */}
+              <m.div
+                variants={itemVariants}
+                className="mt-6 mb-6 flex justify-center md:hidden"
+              >
+                <div className="relative h-44 w-44 sm:h-52 sm:w-52">
+                  <div className="from-primary/40 to-secondary/40 absolute -inset-2 -z-10 rounded-full bg-gradient-to-br opacity-50 blur-2xl" />
+                  <Image
+                    src="https://cdn.discordapp.com/attachments/845650386768756737/1428713133559644282/IMG-20250429-WA0015.jpg?ex=68f3804b&is=68f22ecb&hm=254edfcf098d2da8e46d7600db81dfcacd11ee6bd34a4d47ec0c30a2a0032881&"
+                    alt="Darrell's Profile Picture"
+                    fill
+                    priority
+                    className="rounded-full object-cover shadow-2xl"
+                    sizes="(max-width: 768px) 220px"
+                  />
+                </div>
+              </m.div>
 
               <m.p
                 variants={itemVariants}
@@ -94,23 +112,7 @@ export const HeroSection = () => {
                 backends that just work.
               </m.p>
 
-              {/* === Avatar khusus mobile: tepat di bawah paragraf, sebelum badges/CTA === */}
-              <m.div
-                variants={itemVariants}
-                className="mt-6 flex justify-center md:hidden"
-              >
-                <div className="relative h-44 w-44 sm:h-52 sm:w-52">
-                  <div className="from-primary/40 to-secondary/40 absolute -inset-2 -z-10 rounded-full bg-gradient-to-br opacity-50 blur-2xl" />
-                  <Image
-                    src="https://jhoniananta.com/_next/image?url=%2Fimages%2Fhero%2Ffoto-jhoni-porto.png&w=1920&q=75"
-                    alt="Darrell's Profile Picture"
-                    fill
-                    priority
-                    className="rounded-full object-cover shadow-2xl"
-                    sizes="(max-width: 768px) 220px"
-                  />
-                </div>
-              </m.div>
+              {/* Hapus avatar yang ada di sini */}
 
               {/* Tech badges */}
               <m.div
@@ -137,7 +139,7 @@ export const HeroSection = () => {
                   size="lg"
                   className="shadow-primary/20 shadow-lg"
                 >
-                  <Link href="mailto:your-email@example.com">Contact Me</Link>
+                  <Link href="mailto:[Email]">Contact Me</Link>
                 </Button>
 
                 <Button asChild variant="outline" size="lg">
@@ -188,7 +190,7 @@ export const HeroSection = () => {
                     <div className="from-primary/30 to-secondary/30 rounded-full bg-gradient-to-b p-[3px]">
                       <div className="bg-background relative aspect-square w-full overflow-hidden rounded-full shadow-xl">
                         <Image
-                          src="https://jhoniananta.com/_next/image?url=%2Fimages%2Fhero%2Ffoto-jhoni-porto.png&w=1920&q=75"
+                          src="https://cdn.discordapp.com/attachments/845650386768756737/1428713133559644282/IMG-20250429-WA0015.jpg?ex=68f3804b&is=68f22ecb&hm=254edfcf098d2da8e46d7600db81dfcacd11ee6bd34a4d47ec0c30a2a0032881&"
                           alt="Darrell's Profile Picture"
                           fill
                           priority

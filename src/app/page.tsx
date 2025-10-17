@@ -121,13 +121,12 @@ export default function HomePage() {
   /* ----------------- HERO: tampil instan ----------------- */
   return (
     <>
-      <section id="hero" className="mb-12 scroll-mt-24 md:scroll-mt-28">
-        {/* Hero static? langsung render. Kalau mau aman dari CLS, bisa tampilkan skeleton dulu lalu hero setelah hydration */}
+      <div id="hero" className="relative mb-12 scroll-mt-24 md:scroll-mt-28">
         <HeroSection />
-        {/* <HeroSectionSkeleton /> */}
-      </section>
-
-      <Separator />
+        <div className="container mx-auto px-4">
+          <Separator className="relative z-10" />
+        </div>
+      </div>
 
       <main className="container mx-auto space-y-12 px-4 py-8">
         {/* ===================== EXPERIENCE ===================== */}
