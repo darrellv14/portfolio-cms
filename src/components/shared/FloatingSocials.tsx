@@ -6,7 +6,7 @@ import {
   Github,
   Linkedin,
   Instagram,
-  ArrowUp,
+  ChevronUp,
   ChevronDown,
   SendHorizontal,
 } from "lucide-react";
@@ -207,7 +207,7 @@ export const FloatingSocials = () => {
               aria-label="Scroll to top"
               className="group hover:bg-muted h-8 w-8 rounded-full"
             >
-              <ArrowUp className="text-muted-foreground group-hover:text-primary h-4 w-4 transition-colors duration-300" />
+              <ChevronUp className="text-muted-foreground group-hover:text-primary h-4 w-4 transition-colors duration-300" />
             </Button>
 
             <div className="flex h-8 w-8 items-center justify-center">
