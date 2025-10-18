@@ -73,21 +73,3 @@ export function TestimonialList({
     </>
   );
 }
-
-import { unstable_cache } from "next/cache";
-import { api as serverApi } from "~/trpc/server";
-
-const getCachedTestimonials = unstable_cache(
-  async (limit: number) => {
-    return serverApi.testimonial.getAllPublic({ limit });
-  },
-  ["public_testimonials_list"],
-  {
-    revalidate: 3600,
-  },
-);
-
-export async function Testimonials() {
-  const initialTestimonialsPage = await getCachedTestimonials(LIMIT);
-  return <TestimonialList initialTestimonialsPage={initialTestimonialsPage} />;
-}

@@ -50,21 +50,3 @@ export function ExperienceList({ initialExperiences }: ExperienceListProps) {
     </>
   );
 }
-
-import { unstable_cache } from "next/cache";
-import { api as serverApi } from "~/trpc/server";
-
-const getCachedExperiences = unstable_cache(
-  async () => {
-    return serverApi.experience.getAll();
-  },
-  ["experiences_list"],
-  {
-    revalidate: 3600,
-  },
-);
-
-export async function Experiences() {
-  const initialExperiences = await getCachedExperiences();
-  return <ExperienceList initialExperiences={initialExperiences} />;
-}
