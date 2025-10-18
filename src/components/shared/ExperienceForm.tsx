@@ -18,6 +18,7 @@ import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import type { AppRouter } from "~/server/api/root";
 import { api } from "~/trpc/react";
+import { revalidateExperiencesAction } from "~/lib/actions";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 type Experience = RouterOutput["experience"]["getAll"][number];
@@ -34,7 +35,7 @@ type ExperienceFormValues = z.infer<typeof experienceSchema>;
 
 interface ExperienceFormProps {
   onFormSubmit: () => void;
-  initialData?: Experience; // Prop opsional untuk data awal (mode edit)
+  initialData?: Experience;
 }
 
 export const ExperienceForm = ({
@@ -50,7 +51,7 @@ export const ExperienceForm = ({
     formState: { errors },
   } = useForm<ExperienceFormValues>({
     resolver: zodResolver(experienceSchema),
-    defaultValues: initialData ?? {}, // Isi form dengan data awal jika ada
+    defaultValues: initialData ?? {},
   });
 
   const utils = api.useUtils();
@@ -59,6 +60,7 @@ export const ExperienceForm = ({
     onSuccess: async () => {
       toast.success("Experience has been added");
       await utils.experience.getAll.invalidate();
+      await revalidateExperiencesAction();
       onFormSubmit();
       reset();
     },
@@ -69,6 +71,7 @@ export const ExperienceForm = ({
     onSuccess: async () => {
       toast.success("Experience has been updated");
       await utils.experience.getAll.invalidate();
+      await revalidateExperiencesAction();
       onFormSubmit();
     },
     onError: (error) => toast.error(error.message),

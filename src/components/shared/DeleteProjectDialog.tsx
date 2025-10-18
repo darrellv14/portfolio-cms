@@ -15,6 +15,7 @@ import {
 } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
 import { api } from "~/trpc/react";
+import { revalidateProjectsAction } from "~/lib/actions";
 
 interface DeleteProjectDialogProps {
   projectId: number;
@@ -28,6 +29,7 @@ export const DeleteProjectDialog = ({
     onSuccess: async () => {
       toast.success("Project deleted successfully.");
       await utils.project.getAll.invalidate();
+      await revalidateProjectsAction();
     },
     onError: (error) => {
       toast.error(error.message);

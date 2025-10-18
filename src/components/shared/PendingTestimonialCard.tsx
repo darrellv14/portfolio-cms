@@ -25,6 +25,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import { revalidatePublicTestimonialsAction } from "~/lib/actions";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 type TestimonialWithUser = RouterOutput["testimonial"]["getAllPending"][number];
@@ -44,6 +45,7 @@ export const PendingTestimonialCard = ({
         toast.success("Testimony has been approved!");
         await utils.testimonial.getAllPending.invalidate();
         await utils.testimonial.getAllPublic.invalidate();
+        await revalidatePublicTestimonialsAction();
       },
       onError: (err) => {
         toast.error(`Failed to approve, reason: ${err.message}`);
@@ -52,8 +54,11 @@ export const PendingTestimonialCard = ({
 
   const { mutate: deleteMutate, isPending: isDeleting } =
     api.testimonial.delete.useMutation({
-      onSuccess: () => {
+      onSuccess: async () => {
         toast.warning("Testimony has been deleted!");
+        await utils.testimonial.getAllPending.invalidate();
+        await utils.testimonial.getAllPublic.invalidate();
+        await revalidatePublicTestimonialsAction();
       },
       onError: (err) => {
         toast.error(`Failed to Delete, reason: ${err.message}`);

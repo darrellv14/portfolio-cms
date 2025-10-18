@@ -7,10 +7,11 @@ const TAKE = 6;
 const getCachedProjects = unstable_cache(
   async (take: number) => {
     return staticCaller.project.getAll({ take });
-  },
+  },  
   ["projects_list"],
   {
     revalidate: 600,
+    tags: ["projects"],
   },
 );
 

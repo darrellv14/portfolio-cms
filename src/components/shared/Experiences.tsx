@@ -9,6 +9,7 @@ const getCachedExperiences = unstable_cache(
   ["experiences_list"],
   {
     revalidate: 3600,
+    tags: ["experiences"],
   },
 );
 

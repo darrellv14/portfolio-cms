@@ -15,6 +15,7 @@ import {
 } from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
 import { api } from "~/trpc/react";
+import { revalidateExperiencesAction } from "~/lib/actions";
 
 interface DeleteExperienceDialogProps {
   experienceId: number;
@@ -28,6 +29,7 @@ export const DeleteExperienceDialog = ({
     onSuccess: async () => {
       toast.success("Experience deleted successfully.");
       await utils.experience.getAll.invalidate();
+      await revalidateExperiencesAction();
     },
     onError: (error) => {
       toast.error(error.message);

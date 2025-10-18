@@ -11,6 +11,7 @@ const getCachedTestimonials = unstable_cache(
   ["public_testimonials_list"],
   {
     revalidate: 3600,
+    tags: ["public_testimonials"],
   },
 );
 
