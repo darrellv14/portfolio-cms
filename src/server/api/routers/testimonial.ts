@@ -18,7 +18,7 @@ export const testimonialRouter = createTRPCRouter({
       const { limit, cursor } = input;
       const items = await ctx.db.testimonial.findMany({
         take: limit + 1,
-        ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+        ...(cursor ? { cursor: { id: cursor } } : {}),
         where: { isApproved: true },
         orderBy: { id: "desc" },
         select: {
