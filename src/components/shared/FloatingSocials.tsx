@@ -18,8 +18,16 @@ import { toast } from "sonner";
 
 const socialLinks = [
   { href: "https://github.com/darrellv14", icon: Github, label: "GitHub" },
-  { href: "https://www.linkedin.com/in/your-profile/", icon: Linkedin, label: "LinkedIn" },
-  { href: "https://www.instagram.com/your-profile/", icon: Instagram, label: "Instagram" },
+  {
+    href: "https://www.linkedin.com/in/your-profile/",
+    icon: Linkedin,
+    label: "LinkedIn",
+  },
+  {
+    href: "https://www.instagram.com/your-profile/",
+    icon: Instagram,
+    label: "Instagram",
+  },
 ];
 
 function createSmoothScroller() {
@@ -65,7 +73,9 @@ export const FloatingSocials = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [heroBottom, setHeroBottom] = useState<number | undefined>(undefined);
 
-  const scrollerRef = useRef<ReturnType<typeof createSmoothScroller> | null>(null);
+  const scrollerRef = useRef<ReturnType<typeof createSmoothScroller> | null>(
+    null,
+  );
   scrollerRef.current ??= createSmoothScroller();
 
   useEffect(() => {
@@ -73,7 +83,8 @@ export const FloatingSocials = () => {
     const computeThreshold = () => {
       if (!hero) return 0;
       const rect = hero.getBoundingClientRect();
-      const threshold = rect.bottom + (window.scrollY ?? window.pageYOffset) + 50;
+      const threshold =
+        rect.bottom + (window.scrollY ?? window.pageYOffset) + 50;
       return threshold;
     };
 
@@ -145,7 +156,7 @@ export const FloatingSocials = () => {
         await navigator.clipboard.writeText(shareData.url);
         toast.success("Link copied to clipboard!");
       }
-    } catch (err) {
+    } catch {
       try {
         await navigator.clipboard.writeText(shareData.url);
         toast.info("Sharing failed, link copied instead.");
@@ -162,7 +173,12 @@ export const FloatingSocials = () => {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 50 }}
-          transition={{ type: "spring", stiffness: 320, damping: 28, mass: 0.6 }}
+          transition={{
+            type: "spring",
+            stiffness: 320,
+            damping: 28,
+            mass: 0.6,
+          }}
           className="bg-background/80 fixed top-1/2 right-3 z-40 -translate-y-1/2 transform rounded-full px-3 py-4 shadow-lg backdrop-blur-sm md:hidden"
         >
           <div className="flex flex-col items-center gap-3">
@@ -179,7 +195,10 @@ export const FloatingSocials = () => {
               </Link>
             ))}
 
-            <Separator orientation="horizontal" className="bg-border my-1 h-[1px] w-6" />
+            <Separator
+              orientation="horizontal"
+              className="bg-border my-1 h-[1px] w-6"
+            />
 
             <Button
               variant="ghost"
@@ -205,7 +224,10 @@ export const FloatingSocials = () => {
               <ChevronDown className="text-muted-foreground group-hover:text-primary h-4 w-4 transition-colors duration-300" />
             </Button>
 
-            <Separator orientation="horizontal" className="bg-border my-1 h-[1px] w-6" />
+            <Separator
+              orientation="horizontal"
+              className="bg-border my-1 h-[1px] w-6"
+            />
 
             <Button
               variant="ghost"
