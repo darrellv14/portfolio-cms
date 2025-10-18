@@ -18,16 +18,8 @@ import { toast } from "sonner";
 
 const socialLinks = [
   { href: "https://github.com/darrellv14", icon: Github, label: "GitHub" },
-  {
-    href: "https://www.linkedin.com/in/your-profile/",
-    icon: Linkedin,
-    label: "LinkedIn",
-  },
-  {
-    href: "https://www.instagram.com/your-profile/",
-    icon: Instagram,
-    label: "Instagram",
-  },
+  { href: "https://www.linkedin.com/in/your-profile/", icon: Linkedin, label: "LinkedIn" },
+  { href: "https://www.instagram.com/your-profile/", icon: Instagram, label: "Instagram" },
 ];
 
 function createSmoothScroller() {
@@ -71,20 +63,20 @@ function createSmoothScroller() {
 
 export const FloatingSocials = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [idleHidden, setIdleHidden] = useState(false);
   const [heroBottom, setHeroBottom] = useState<number | undefined>(undefined);
 
-  const scrollerRef = useRef<ReturnType<typeof createSmoothScroller> | null>(
-    null,
-  );
+  const scrollerRef = useRef<ReturnType<typeof createSmoothScroller> | null>(null);
   scrollerRef.current ??= createSmoothScroller();
+
+  const idleTimerRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     const hero = document.getElementById("hero");
     const computeThreshold = () => {
       if (!hero) return 0;
       const rect = hero.getBoundingClientRect();
-      const threshold =
-        rect.bottom + (window.scrollY ?? window.pageYOffset) + 50;
+      const threshold = rect.bottom + (window.scrollY ?? window.pageYOffset) + 50;
       return threshold;
     };
 
@@ -96,10 +88,22 @@ export const FloatingSocials = () => {
       };
     };
 
+    const scheduleIdle = () => {
+      if (idleTimerRef.current !== undefined) window.clearTimeout(idleTimerRef.current);
+      idleTimerRef.current = window.setTimeout(() => {
+        setIdleHidden(true);
+      }, 1500);
+    };
+
+    const clearIdle = () => {
+      if (idleTimerRef.current !== undefined) window.clearTimeout(idleTimerRef.current);
+      idleTimerRef.current = undefined;
+    };
+
     const hysteresis = 24;
     let lastState = false;
 
-    const onScroll = debounce(() => {
+    const onScrollDebounced = debounce(() => {
       const th = heroBottom ?? computeThreshold();
       const y = window.scrollY ?? window.pageYOffset;
       const show = y > th + hysteresis;
@@ -111,27 +115,32 @@ export const FloatingSocials = () => {
         lastState = next;
         setIsVisible(next);
       }
+      if (lastState) {
+        scheduleIdle();
+      } else {
+        clearIdle();
+        setIdleHidden(false);
+      }
     }, 80);
 
+    const onUserActivity = () => {
+      setIdleHidden(false);
+      if (lastState) scheduleIdle();
+    };
+
     setHeroBottom(computeThreshold());
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    onScroll();
+    window.addEventListener("scroll", onUserActivity, { passive: true });
+    window.addEventListener("scroll", onScrollDebounced, { passive: true });
+    window.addEventListener("resize", onScrollDebounced);
+    onScrollDebounced();
 
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("scroll", onUserActivity);
+      window.removeEventListener("scroll", onScrollDebounced);
+      window.removeEventListener("resize", onScrollDebounced);
+      clearIdle();
     };
   }, [heroBottom]);
-
-  const handleScrollTop = () => {
-    scrollerRef.current?.scrollToY(0);
-  };
-
-  const handleScrollBottom = () => {
-    const maxY = document.documentElement.scrollHeight - window.innerHeight;
-    scrollerRef.current?.scrollToY(maxY);
-  };
 
   useEffect(() => {
     const onWheelOrTouch = () => scrollerRef.current?.cancel();
@@ -142,6 +151,26 @@ export const FloatingSocials = () => {
       window.removeEventListener("touchstart", onWheelOrTouch);
     };
   }, []);
+
+  useEffect(() => {
+    const stop = () => scrollerRef.current?.cancel();
+    document.addEventListener("visibilitychange", stop);
+    window.addEventListener("pagehide", stop);
+    return () => {
+      document.removeEventListener("visibilitychange", stop);
+      window.removeEventListener("pagehide", stop);
+      scrollerRef.current?.cancel();
+    };
+  }, []);
+
+  const handleScrollTop = () => {
+    scrollerRef.current?.scrollToY(0);
+  };
+
+  const handleScrollBottom = () => {
+    const maxY = document.documentElement.scrollHeight - window.innerHeight;
+    scrollerRef.current?.scrollToY(maxY);
+  };
 
   const handleShare = async () => {
     const shareData = {
@@ -166,19 +195,16 @@ export const FloatingSocials = () => {
     }
   };
 
+  const shown = isVisible && !idleHidden;
+
   return (
     <AnimatePresence>
-      {isVisible && (
+      {shown && (
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 50 }}
-          transition={{
-            type: "spring",
-            stiffness: 320,
-            damping: 28,
-            mass: 0.6,
-          }}
+          transition={{ type: "spring", stiffness: 320, damping: 28, mass: 0.6 }}
           className="bg-background/80 fixed top-1/2 right-3 z-40 -translate-y-1/2 transform rounded-full px-3 py-4 shadow-lg backdrop-blur-sm md:hidden"
         >
           <div className="flex flex-col items-center gap-3">
@@ -195,10 +221,7 @@ export const FloatingSocials = () => {
               </Link>
             ))}
 
-            <Separator
-              orientation="horizontal"
-              className="bg-border my-1 h-[1px] w-6"
-            />
+            <Separator orientation="horizontal" className="bg-border my-1 h-[1px] w-6" />
 
             <Button
               variant="ghost"
@@ -224,10 +247,7 @@ export const FloatingSocials = () => {
               <ChevronDown className="text-muted-foreground group-hover:text-primary h-4 w-4 transition-colors duration-300" />
             </Button>
 
-            <Separator
-              orientation="horizontal"
-              className="bg-border my-1 h-[1px] w-6"
-            />
+            <Separator orientation="horizontal" className="bg-border my-1 h-[1px] w-6" />
 
             <Button
               variant="ghost"
