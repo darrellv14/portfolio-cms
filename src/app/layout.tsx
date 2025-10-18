@@ -8,6 +8,7 @@ import { Navbar } from "~/components/shared/Navbar";
 import { Toaster } from "~/components/ui/sonner";
 import { ThemeProvider } from "~/components/theme-provider";
 import { MotionLazyProvider } from "~/components/providers/MotionLazyProvider";
+import { Footer } from "~/components/shared/Footer";
 
 export const metadata: Metadata = {
   title: "Darrell's Portfolio",
@@ -42,6 +43,7 @@ export default function RootLayout({
                   <main>{children}</main>
                 </div>
                 <Toaster />
+                <Footer />
               </MotionLazyProvider>
             </ThemeProvider>
           </TRPCReactProvider>

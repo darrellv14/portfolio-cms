@@ -1,7 +1,7 @@
-import { Separator } from "~/components/ui/separator";
-import { HeroSection } from "~/components/shared/HeroSection";
 import { Suspense } from "react";
+import { HeroSection } from "~/components/shared/HeroSection";
 import { HeroSectionSkeleton } from "~/components/shared/HeroSectionSkeleton";
+import { Separator } from "~/components/ui/separator";
 
 import { Experiences } from "~/components/shared/Experiences";
 import { Projects } from "~/components/shared/Projects";
@@ -10,6 +10,7 @@ import { Testimonials } from "~/components/shared/Testimonials";
 import { ExperienceListSkeleton } from "~/components/shared/ExperienceListSkeleton";
 import { ProjectListSkeleton } from "~/components/shared/ProjectListSkeleton";
 import { TestimonialListSkeleton } from "~/components/shared/TestimonialListSkeleton";
+import { FloatingSocials } from "~/components/shared/FloatingSocials";
 
 export default function HomePage() {
   return (
@@ -53,6 +54,7 @@ export default function HomePage() {
           </Suspense>
         </section>
       </div>
+      <FloatingSocials />
     </>
   );
 }
