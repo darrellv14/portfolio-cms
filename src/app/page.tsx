@@ -11,7 +11,7 @@ export default async function HomePage() {
   const initialExperiences = await api.experience.getAll();
   const initialProjectsPage = await api.project.getAll({ take: 6 });
   const initialTestimonialsPage = await api.testimonial.getAllPublic({
-    limit: 3,
+    limit: 12,
   });
 
   return (
