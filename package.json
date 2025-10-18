@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "prisma generate --no-engine && next build",
+    "build": "NODE_OPTIONS=--dns-result-order=ipv4first DATABASE_URL=$DIRECT_URL npx prisma migrate deploy && next build",
     "check": "next lint && tsc --noEmit",
     "db:generate": "prisma migrate dev",
     "db:migrate": "prisma migrate deploy",
