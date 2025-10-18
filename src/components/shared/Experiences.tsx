@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { staticCaller } from "~/trpc/server";
+import { staticCaller } from "~/trpc/static-caller";
 import { ExperienceList } from "./ExperienceList";
 
 const getCachedExperiences = unstable_cache(

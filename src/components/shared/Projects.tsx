@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { staticCaller } from "~/trpc/server";
+import { staticCaller } from "~/trpc/static-caller";
 import { ProjectList } from "./ProjectList";
 
 const TAKE = 6;
