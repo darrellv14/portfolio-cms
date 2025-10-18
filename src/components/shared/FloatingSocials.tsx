@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   Github,
@@ -30,36 +30,114 @@ const socialLinks = [
   },
 ];
 
-function smoothScrollTo(y: number) {
-  window.scrollTo({ top: y, behavior: "smooth" });
+function createSmoothScroller() {
+  let rafId: number | null = null;
+
+  const cancel = () => {
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+  };
+
+  const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+  const scrollToY = (targetY: number, opts?: { duration?: number }) => {
+    const startY = window.scrollY || window.pageYOffset;
+    const distance = targetY - startY;
+    const duration = Math.max(300, Math.min(Math.abs(distance) * 0.6, 900));
+    let startTime: number | null = null;
+
+    const step = (timestamp: number) => {
+      if (startTime === null) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(1, elapsed / (opts?.duration ?? duration));
+      const eased = easeOutCubic(progress);
+      window.scrollTo(0, startY + distance * eased);
+      if (progress < 1) {
+        rafId = requestAnimationFrame(step);
+      } else {
+        rafId = null;
+      }
+    };
+
+    cancel();
+    rafId = requestAnimationFrame(step);
+    return cancel;
+  };
+
+  return { scrollToY, cancel };
 }
 
 export const FloatingSocials = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [heroBottom, setHeroBottom] = useState(0);
 
+  const scrollerRef = useRef<ReturnType<typeof createSmoothScroller> | null>(null);
+  if (!scrollerRef.current) scrollerRef.current = createSmoothScroller();
+
   useEffect(() => {
-    const heroElement = document.getElementById("hero");
-    if (heroElement) {
-      const rect = heroElement.getBoundingClientRect();
+    const hero = document.getElementById("hero");
+    const computeThreshold = () => {
+      if (!hero) return 0;
+      const rect = hero.getBoundingClientRect();
       const threshold = rect.bottom + window.scrollY + 50;
-      setHeroBottom(threshold);
-    }
-    const toggleVisibility = () => {
-      if (window.scrollY > heroBottom && heroBottom > 0) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
+      return threshold;
     };
-    window.addEventListener("scroll", toggleVisibility, { passive: true });
-    toggleVisibility();
-    return () => window.removeEventListener("scroll", toggleVisibility);
+
+    const debounce = (fn: VoidFunction, delay = 80) => {
+      let t: number | undefined;
+      return () => {
+        if (t) window.clearTimeout(t);
+        t = window.setTimeout(fn, delay);
+      };
+    };
+
+    const hysteresis = 24;
+    let lastState = false;
+
+    const onScroll = debounce(() => {
+      const th = heroBottom || computeThreshold();
+      const show = window.scrollY > th + hysteresis;
+      const hide = window.scrollY < th - hysteresis;
+      let next = lastState;
+      if (!lastState && show) next = true;
+      if (lastState && hide) next = false;
+      if (next !== lastState) {
+        lastState = next;
+        setIsVisible(next);
+      }
+    }, 80);
+
+    setHeroBottom(computeThreshold());
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    onScroll();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, [heroBottom]);
 
-  const handleScrollTop = () => smoothScrollTo(0);
-  const handleScrollBottom = () =>
-    smoothScrollTo(document.documentElement.scrollHeight);
+  const handleScrollTop = () => {
+    scrollerRef.current!.scrollToY(0);
+  };
+
+  const handleScrollBottom = () => {
+    const maxY = document.documentElement.scrollHeight - window.innerHeight;
+    scrollerRef.current!.scrollToY(maxY);
+  };
+
+  useEffect(() => {
+    const onWheelOrTouch = () => scrollerRef.current?.cancel();
+    window.addEventListener("wheel", onWheelOrTouch, { passive: true });
+    window.addEventListener("touchstart", onWheelOrTouch, { passive: true });
+    return () => {
+      window.removeEventListener("wheel", onWheelOrTouch);
+      window.removeEventListener("touchstart", onWheelOrTouch);
+    };
+  }, []);
 
   const handleShare = async () => {
     const shareData = {
@@ -93,11 +171,10 @@ export const FloatingSocials = () => {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 50 }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
+          transition={{ type: "spring", stiffness: 320, damping: 28, mass: 0.6 }}
           className="bg-background/80 fixed top-1/2 right-3 z-40 -translate-y-1/2 transform rounded-full px-3 py-4 shadow-lg backdrop-blur-sm md:hidden"
         >
           <div className="flex flex-col items-center gap-3">
-            {/* --- Grup Sosial Media --- */}
             {socialLinks.map((link) => (
               <Link
                 key={link.href}
@@ -111,13 +188,11 @@ export const FloatingSocials = () => {
               </Link>
             ))}
 
-            {/* --- Separator 1 --- */}
             <Separator
               orientation="horizontal"
               className="bg-border my-1 h-[1px] w-6"
             />
 
-            {/* --- Grup Navigasi & Tema --- */}
             <Button
               variant="ghost"
               size="icon"
@@ -128,7 +203,6 @@ export const FloatingSocials = () => {
               <ArrowUp className="text-muted-foreground group-hover:text-primary h-4 w-4 transition-colors duration-300" />
             </Button>
 
-            {/* Panggil DarkModeToggle dengan prop showIcons={false} */}
             <div className="flex h-8 w-8 items-center justify-center">
               <DarkModeToggle showIcons={false} />
             </div>
@@ -143,13 +217,11 @@ export const FloatingSocials = () => {
               <ChevronDown className="text-muted-foreground group-hover:text-primary h-4 w-4 transition-colors duration-300" />
             </Button>
 
-            {/* --- Separator 2 --- */}
             <Separator
               orientation="horizontal"
               className="bg-border my-1 h-[1px] w-6"
             />
 
-            {/* --- Tombol Share --- */}
             <Button
               variant="ghost"
               size="icon"
