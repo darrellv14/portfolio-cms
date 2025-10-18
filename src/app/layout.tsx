@@ -27,8 +27,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${lexend.variable} !scroll-smooth`}>
-      <body>
+    <html lang="en" className={`${lexend.variable} h-full !scroll-smooth`}>
+      <body className="flex min-h-dvh min-h-screen flex-col">
         <SessionProvider>
           <TRPCReactProvider>
             <ThemeProvider
@@ -39,11 +39,13 @@ export default function RootLayout({
             >
               <MotionLazyProvider>
                 <Navbar />
-                <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 2xl:max-w-[90rem]">
-                  <main>{children}</main>
+                <div className="flex-1">
+                  <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 2xl:max-w-[90rem]">
+                    <main>{children}</main>
+                  </div>
                 </div>
-                <Toaster />
                 <Footer />
+                <Toaster />
               </MotionLazyProvider>
             </ThemeProvider>
           </TRPCReactProvider>
