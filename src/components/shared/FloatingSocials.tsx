@@ -43,7 +43,7 @@ function createSmoothScroller() {
   const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
   const scrollToY = (targetY: number, opts?: { duration?: number }) => {
-    const startY = window.scrollY || window.pageYOffset;
+    const startY = (window.scrollY ?? window.pageYOffset) as number;
     const distance = targetY - startY;
     const duration = Math.max(300, Math.min(Math.abs(distance) * 0.6, 900));
     let startTime: number | null = null;
@@ -74,21 +74,21 @@ export const FloatingSocials = () => {
   const [heroBottom, setHeroBottom] = useState(0);
 
   const scrollerRef = useRef<ReturnType<typeof createSmoothScroller> | null>(null);
-  if (!scrollerRef.current) scrollerRef.current = createSmoothScroller();
+  scrollerRef.current ??= createSmoothScroller();
 
   useEffect(() => {
     const hero = document.getElementById("hero");
     const computeThreshold = () => {
       if (!hero) return 0;
       const rect = hero.getBoundingClientRect();
-      const threshold = rect.bottom + window.scrollY + 50;
+      const threshold = rect.bottom + (window.scrollY ?? window.pageYOffset) + 50;
       return threshold;
     };
 
     const debounce = (fn: VoidFunction, delay = 80) => {
       let t: number | undefined;
       return () => {
-        if (t) window.clearTimeout(t);
+        if (t !== undefined) window.clearTimeout(t);
         t = window.setTimeout(fn, delay);
       };
     };
@@ -98,8 +98,8 @@ export const FloatingSocials = () => {
 
     const onScroll = debounce(() => {
       const th = heroBottom || computeThreshold();
-      const show = window.scrollY > th + hysteresis;
-      const hide = window.scrollY < th - hysteresis;
+      const show = (window.scrollY ?? window.pageYOffset) > th + hysteresis;
+      const hide = (window.scrollY ?? window.pageYOffset) < th - hysteresis;
       let next = lastState;
       if (!lastState && show) next = true;
       if (lastState && hide) next = false;
