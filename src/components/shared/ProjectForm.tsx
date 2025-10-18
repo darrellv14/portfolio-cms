@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { inferRouterOutputs } from "@trpc/server";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -41,6 +42,7 @@ export const ProjectForm = ({
   onFormSubmit,
   initialData,
 }: ProjectFormProps) => {
+  const router = useRouter();
   const isEditMode = !!initialData;
 
   const {
@@ -68,6 +70,7 @@ export const ProjectForm = ({
       toast.success("Project has been created");
       await utils.project.getAll.invalidate();
       await revalidateProjectsAction();
+      router.refresh();
       onFormSubmit();
       reset();
     },
@@ -79,6 +82,7 @@ export const ProjectForm = ({
       toast.success("Project has been updated");
       await utils.project.getAll.invalidate();
       await revalidateProjectsAction();
+      router.refresh();
       onFormSubmit();
     },
     onError: (error) => toast.error(error.message),

@@ -19,6 +19,7 @@ import { Textarea } from "~/components/ui/textarea";
 import type { AppRouter } from "~/server/api/root";
 import { api } from "~/trpc/react";
 import { revalidateExperiencesAction } from "~/lib/actions";
+import { useRouter } from "next/navigation";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 type Experience = RouterOutput["experience"]["getAll"][number];
@@ -42,6 +43,7 @@ export const ExperienceForm = ({
   onFormSubmit,
   initialData,
 }: ExperienceFormProps) => {
+  const router = useRouter();
   const isEditMode = !!initialData;
 
   const {
@@ -61,6 +63,7 @@ export const ExperienceForm = ({
       toast.success("Experience has been added");
       await utils.experience.getAll.invalidate();
       await revalidateExperiencesAction();
+      router.refresh();
       onFormSubmit();
       reset();
     },
@@ -72,6 +75,7 @@ export const ExperienceForm = ({
       toast.success("Experience has been updated");
       await utils.experience.getAll.invalidate();
       await revalidateExperiencesAction();
+      router.refresh();
       onFormSubmit();
     },
     onError: (error) => toast.error(error.message),

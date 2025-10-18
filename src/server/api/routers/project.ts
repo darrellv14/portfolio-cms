@@ -30,7 +30,6 @@ export const projectRouter = createTRPCRouter({
           imageURL: true,
           tags: { select: { id: true, name: true } },
         },
-        cacheStrategy: { ttl: 3600 },
       });
 
       let nextCursor: number | undefined;

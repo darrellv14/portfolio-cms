@@ -26,6 +26,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import { revalidatePublicTestimonialsAction } from "~/lib/actions";
+import { useRouter } from "next/navigation";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 type TestimonialWithUser = RouterOutput["testimonial"]["getAllPending"][number];
@@ -37,6 +38,7 @@ interface PendingTestimonialCardProps {
 export const PendingTestimonialCard = ({
   testimonial,
 }: PendingTestimonialCardProps) => {
+  const router = useRouter();
   const utils = api.useUtils();
 
   const { mutate: approveMutate, isPending: isApproving } =
@@ -46,6 +48,7 @@ export const PendingTestimonialCard = ({
         await utils.testimonial.getAllPending.invalidate();
         await utils.testimonial.getAllPublic.invalidate();
         await revalidatePublicTestimonialsAction();
+        router.refresh();
       },
       onError: (err) => {
         toast.error(`Failed to approve, reason: ${err.message}`);
@@ -59,6 +62,7 @@ export const PendingTestimonialCard = ({
         await utils.testimonial.getAllPending.invalidate();
         await utils.testimonial.getAllPublic.invalidate();
         await revalidatePublicTestimonialsAction();
+        router.refresh();
       },
       onError: (err) => {
         toast.error(`Failed to Delete, reason: ${err.message}`);

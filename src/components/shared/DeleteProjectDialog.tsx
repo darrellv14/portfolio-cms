@@ -16,6 +16,7 @@ import {
 import { Button } from "~/components/ui/button";
 import { api } from "~/trpc/react";
 import { revalidateProjectsAction } from "~/lib/actions";
+import { useRouter } from "next/navigation";
 
 interface DeleteProjectDialogProps {
   projectId: number;
@@ -24,12 +25,14 @@ interface DeleteProjectDialogProps {
 export const DeleteProjectDialog = ({
   projectId,
 }: DeleteProjectDialogProps) => {
+  const router = useRouter();
   const utils = api.useUtils();
   const deleteMutation = api.project.delete.useMutation({
     onSuccess: async () => {
       toast.success("Project deleted successfully.");
       await utils.project.getAll.invalidate();
       await revalidateProjectsAction();
+      router.refresh();
     },
     onError: (error) => {
       toast.error(error.message);

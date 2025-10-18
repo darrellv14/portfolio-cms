@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { Button } from "../ui/button";
 import {
@@ -36,6 +37,7 @@ interface AddTestimonialFormProps {
 export const AddTestimonialForm = ({
   onFormSubmit,
 }: AddTestimonialFormProps) => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -45,17 +47,21 @@ export const AddTestimonialForm = ({
     resolver: zodResolver(testimonialSchema),
   });
 
+  const utils = api.useUtils();
+
   const createTestimonialMutation = api.testimonial.create.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success(
-        "Thank you! Your testimony has been sucessfully sent and is waiting for review.",
+        "Thank you! Your testimony has been successfully sent and is waiting for review.",
       );
+      await utils.testimonial.getAllPublic.invalidate();
+      router.refresh();
       reset();
       onFormSubmit();
     },
     onError: (error) => {
       if (error.data?.code === "UNAUTHORIZED") {
-        toast.error("You must login to send a testimony..");
+        toast.error("You must login to send a testimony.");
       } else {
         toast.error(`Failed to send testimony, reason: ${error.message}`);
       }
@@ -63,8 +69,11 @@ export const AddTestimonialForm = ({
   });
 
   const onSubmit = (data: TestimonialFormValues) => {
+    if (createTestimonialMutation.isPending) return;
     createTestimonialMutation.mutate(data);
   };
+
+  const isPending = createTestimonialMutation.isPending;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -74,7 +83,8 @@ export const AddTestimonialForm = ({
             <FieldLabel>Role / Position</FieldLabel>
             <Input
               {...register("position")}
-              placeholder="e.g., SR IT Specialist@ IT BCA"
+              placeholder="e.g., SR IT Specialist @ IT BCA"
+              disabled={isPending}
             />
             {errors.position && (
               <FieldError>{errors.position.message}</FieldError>
@@ -86,6 +96,8 @@ export const AddTestimonialForm = ({
             <Textarea
               {...register("description")}
               placeholder="Darrell Valentino is an eager individual that is very professional in his field..."
+              rows={5}
+              disabled={isPending}
             />
             {errors.description && (
               <FieldError>{errors.description.message}</FieldError>
@@ -94,12 +106,8 @@ export const AddTestimonialForm = ({
         </FieldGroup>
       </FieldSet>
 
-      <Button
-        type="submit"
-        disabled={createTestimonialMutation.isPending}
-        className="w-full"
-      >
-        {createTestimonialMutation.isPending ? "Sending..." : "Send Testimony"}
+      <Button type="submit" disabled={isPending} className="w-full">
+        {isPending ? "Sending..." : "Send Testimony"}
       </Button>
     </form>
   );

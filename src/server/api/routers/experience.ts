@@ -13,7 +13,6 @@ export const experienceRouter = createTRPCRouter({
         description: true,
         logoUrl: true,
       },
-      cacheStrategy: { ttl: 3600 },
     });
   }),
 

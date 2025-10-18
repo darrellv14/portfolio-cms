@@ -16,6 +16,7 @@ import {
 import { Button } from "~/components/ui/button";
 import { api } from "~/trpc/react";
 import { revalidateExperiencesAction } from "~/lib/actions";
+import { useRouter } from "next/navigation";
 
 interface DeleteExperienceDialogProps {
   experienceId: number;
@@ -24,12 +25,14 @@ interface DeleteExperienceDialogProps {
 export const DeleteExperienceDialog = ({
   experienceId,
 }: DeleteExperienceDialogProps) => {
+  const router = useRouter();
   const utils = api.useUtils();
   const deleteMutation = api.experience.delete.useMutation({
     onSuccess: async () => {
       toast.success("Experience deleted successfully.");
       await utils.experience.getAll.invalidate();
       await revalidateExperiencesAction();
+      router.refresh();
     },
     onError: (error) => {
       toast.error(error.message);
