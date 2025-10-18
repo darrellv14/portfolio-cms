@@ -83,3 +83,21 @@ export function ProjectList({ initialProjectsPage }: ProjectListProps) {
     </>
   );
 }
+
+import { unstable_cache } from "next/cache";
+import { api as serverApi } from "~/trpc/server";
+
+const getCachedProjects = unstable_cache(
+  async (take: number) => {
+    return serverApi.project.getAll({ take });
+  },
+  ["projects_list"],
+  {
+    revalidate: 600,
+  },
+);
+
+export async function Projects() {
+  const initialProjectsPage = await getCachedProjects(TAKE);
+  return <ProjectList initialProjectsPage={initialProjectsPage} />;
+}
