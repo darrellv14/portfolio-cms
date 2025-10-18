@@ -35,15 +35,17 @@ export const AddTestimonialDialog = () => {
           Write Testimony
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
+      <DialogContent className="max-h-[85dvh] w-[95vw] overflow-y-auto p-4 sm:max-w-[425px] sm:p-6">
+        <DialogHeader className="bg-background sticky top-0 z-10 pb-3">
           <DialogTitle>Give Testimony</DialogTitle>
           <DialogDescription>
             Share your experience working with Darrell Valentino. Your testimony
             will be posted once it is approved.
           </DialogDescription>
         </DialogHeader>
-        <AddTestimonialForm onFormSubmit={() => setOpen(false)} />
+        <div className="grid gap-4">
+          <AddTestimonialForm onFormSubmit={() => setOpen(false)} />
+        </div>
       </DialogContent>
     </Dialog>
   );

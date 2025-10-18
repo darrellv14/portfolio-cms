@@ -54,15 +54,15 @@ export const DeleteProjectDialog = ({
           <Trash2 className="h-4 w-4" />
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
+      <AlertDialogContent className="max-h-[80dvh] w-[95vw] overflow-y-auto p-4 sm:max-w-md sm:p-6">
+        <AlertDialogHeader className="bg-background sticky top-0 z-10 pb-3">
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete this
             project from the database.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
+        <AlertDialogFooter className="pt-3">
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}

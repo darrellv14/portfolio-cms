@@ -42,8 +42,8 @@ export const ProjectDialog = ({ project }: ProjectDialogProps) => {
         )}
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
+      <DialogContent className="max-h-[85dvh] w-[95vw] overflow-y-auto p-4 sm:max-w-lg sm:p-6">
+        <DialogHeader className="bg-background sticky top-0 z-10 pb-3">
           <DialogTitle>
             {isEditMode ? "Edit Project" : "Add a new project"}
           </DialogTitle>
@@ -54,10 +54,12 @@ export const ProjectDialog = ({ project }: ProjectDialogProps) => {
           </DialogDescription>
         </DialogHeader>
 
-        <ProjectForm
-          onFormSubmit={() => setOpen(false)}
-          initialData={project}
-        />
+        <div className="grid gap-4">
+          <ProjectForm
+            onFormSubmit={() => setOpen(false)}
+            initialData={project}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

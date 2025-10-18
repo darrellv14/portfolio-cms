@@ -41,8 +41,8 @@ export const ExperienceDialog = ({ experience }: ExperienceDialogProps) => {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
+      <DialogContent className="max-h-[85dvh] w-[95vw] overflow-y-auto p-4 sm:max-w-lg sm:p-6">
+        <DialogHeader className="bg-background sticky top-0 z-10 pb-3">
           <DialogTitle>
             {isEditMode ? "Edit Experience" : "Add a new experience"}
           </DialogTitle>
@@ -52,10 +52,13 @@ export const ExperienceDialog = ({ experience }: ExperienceDialogProps) => {
               : "Fill in the details below to add a new experience."}
           </DialogDescription>
         </DialogHeader>
-        <ExperienceForm
-          onFormSubmit={() => setOpen(false)}
-          initialData={experience}
-        />
+
+        <div className="grid gap-4">
+          <ExperienceForm
+            onFormSubmit={() => setOpen(false)}
+            initialData={experience}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );
