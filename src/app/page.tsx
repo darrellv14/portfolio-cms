@@ -1,19 +1,17 @@
 import { Separator } from "~/components/ui/separator";
 import { HeroSection } from "~/components/shared/HeroSection";
-import { api } from "~/trpc/server";
-import { ExperienceList } from "~/components/shared/ExperienceList";
-import { ProjectList } from "~/components/shared/ProjectList";
-import { TestimonialList } from "~/components/shared/TestimonialList";
 import { Suspense } from "react";
 import { HeroSectionSkeleton } from "~/components/shared/HeroSectionSkeleton";
 
-export default async function HomePage() {
-  const initialExperiences = await api.experience.getAll();
-  const initialProjectsPage = await api.project.getAll({ take: 6 });
-  const initialTestimonialsPage = await api.testimonial.getAllPublic({
-    limit: 3,
-  });
+import { Experiences } from "~/components/shared/Experiences";
+import { Projects } from "~/components/shared/Projects";
+import { Testimonials } from "~/components/shared/Testimonials";
 
+import { ExperienceListSkeleton } from "~/components/shared/ExperienceListSkeleton";
+import { ProjectListSkeleton } from "~/components/shared/ProjectListSkeleton";
+import { TestimonialListSkeleton } from "~/components/shared/TestimonialListSkeleton";
+
+export default function HomePage() {
   return (
     <>
       <div id="hero" className="relative mb-12 scroll-mt-24 md:scroll-mt-28">
@@ -28,7 +26,9 @@ export default async function HomePage() {
           id="experience"
           className="scroll-mt-24 space-y-6 md:scroll-mt-28"
         >
-          <ExperienceList initialExperiences={initialExperiences} />
+          <Suspense fallback={<ExperienceListSkeleton />}>
+            <Experiences />
+          </Suspense>
         </section>
 
         <Separator />
@@ -37,7 +37,9 @@ export default async function HomePage() {
           id="projects"
           className="scroll-mt-24 space-y-6 md:scroll-mt-28"
         >
-          <ProjectList initialProjectsPage={initialProjectsPage} />
+          <Suspense fallback={<ProjectListSkeleton />}>
+            <Projects />
+          </Suspense>
         </section>
 
         <Separator />
@@ -46,7 +48,9 @@ export default async function HomePage() {
           id="testimonials"
           className="scroll-mt-24 space-y-6 md:scroll-mt-28"
         >
-          <TestimonialList initialTestimonialsPage={initialTestimonialsPage} />
+          <Suspense fallback={<TestimonialListSkeleton />}>
+            <Testimonials />
+          </Suspense>
         </section>
       </div>
     </>
