@@ -18,16 +18,8 @@ import { toast } from "sonner";
 
 const socialLinks = [
   { href: "https://github.com/darrellv14", icon: Github, label: "GitHub" },
-  {
-    href: "https://www.linkedin.com/in/your-profile/",
-    icon: Linkedin,
-    label: "LinkedIn",
-  },
-  {
-    href: "https://www.instagram.com/your-profile/",
-    icon: Instagram,
-    label: "Instagram",
-  },
+  { href: "https://www.linkedin.com/in/your-profile/", icon: Linkedin, label: "LinkedIn" },
+  { href: "https://www.instagram.com/your-profile/", icon: Instagram, label: "Instagram" },
 ];
 
 function createSmoothScroller() {
@@ -43,13 +35,13 @@ function createSmoothScroller() {
   const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
   const scrollToY = (targetY: number, opts?: { duration?: number }) => {
-    const startY = (window.scrollY ?? window.pageYOffset) as number;
+    const startY = window.scrollY ?? window.pageYOffset;
     const distance = targetY - startY;
     const duration = Math.max(300, Math.min(Math.abs(distance) * 0.6, 900));
     let startTime: number | null = null;
 
     const step = (timestamp: number) => {
-      if (startTime === null) startTime = timestamp;
+      startTime ??= timestamp;
       const elapsed = timestamp - startTime;
       const progress = Math.min(1, elapsed / (opts?.duration ?? duration));
       const eased = easeOutCubic(progress);
@@ -71,7 +63,7 @@ function createSmoothScroller() {
 
 export const FloatingSocials = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [heroBottom, setHeroBottom] = useState(0);
+  const [heroBottom, setHeroBottom] = useState<number | undefined>(undefined);
 
   const scrollerRef = useRef<ReturnType<typeof createSmoothScroller> | null>(null);
   scrollerRef.current ??= createSmoothScroller();
@@ -97,9 +89,10 @@ export const FloatingSocials = () => {
     let lastState = false;
 
     const onScroll = debounce(() => {
-      const th = heroBottom || computeThreshold();
-      const show = (window.scrollY ?? window.pageYOffset) > th + hysteresis;
-      const hide = (window.scrollY ?? window.pageYOffset) < th - hysteresis;
+      const th = heroBottom ?? computeThreshold();
+      const y = window.scrollY ?? window.pageYOffset;
+      const show = y > th + hysteresis;
+      const hide = y < th - hysteresis;
       let next = lastState;
       if (!lastState && show) next = true;
       if (lastState && hide) next = false;
@@ -121,12 +114,12 @@ export const FloatingSocials = () => {
   }, [heroBottom]);
 
   const handleScrollTop = () => {
-    scrollerRef.current!.scrollToY(0);
+    scrollerRef.current?.scrollToY(0);
   };
 
   const handleScrollBottom = () => {
     const maxY = document.documentElement.scrollHeight - window.innerHeight;
-    scrollerRef.current!.scrollToY(maxY);
+    scrollerRef.current?.scrollToY(maxY);
   };
 
   useEffect(() => {
@@ -153,13 +146,11 @@ export const FloatingSocials = () => {
         toast.success("Link copied to clipboard!");
       }
     } catch (err) {
-      console.error("Error sharing:", err);
       try {
         await navigator.clipboard.writeText(shareData.url);
         toast.info("Sharing failed, link copied instead.");
-      } catch (copyErr) {
+      } catch {
         toast.error("Failed to share or copy link.");
-        console.error("Error copying link:", copyErr);
       }
     }
   };
@@ -188,10 +179,7 @@ export const FloatingSocials = () => {
               </Link>
             ))}
 
-            <Separator
-              orientation="horizontal"
-              className="bg-border my-1 h-[1px] w-6"
-            />
+            <Separator orientation="horizontal" className="bg-border my-1 h-[1px] w-6" />
 
             <Button
               variant="ghost"
@@ -217,10 +205,7 @@ export const FloatingSocials = () => {
               <ChevronDown className="text-muted-foreground group-hover:text-primary h-4 w-4 transition-colors duration-300" />
             </Button>
 
-            <Separator
-              orientation="horizontal"
-              className="bg-border my-1 h-[1px] w-6"
-            />
+            <Separator orientation="horizontal" className="bg-border my-1 h-[1px] w-6" />
 
             <Button
               variant="ghost"
