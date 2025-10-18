@@ -21,7 +21,7 @@ export const projectRouter = createTRPCRouter({
 
       const rows = await ctx.db.project.findMany({
         take: take + 1,
-        ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+        ...(cursor ? { cursor: { id: cursor } } : {}),
         orderBy: { id: "desc" },
         select: {
           id: true,
@@ -30,6 +30,7 @@ export const projectRouter = createTRPCRouter({
           imageURL: true,
           tags: { select: { id: true, name: true } },
         },
+        cacheStrategy: { ttl: 3600 },
       });
 
       let nextCursor: number | undefined;
@@ -52,14 +53,12 @@ export const projectRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { tags: tagsString } = input;
-
       const tagNames = tagsString
         ? tagsString
             .split(",")
             .map((tag) => tag.trim().toLowerCase())
             .filter((tag) => tag.length > 0)
         : [];
-
       const newProject = await ctx.db.project.create({
         data: {
           title: input.title,
@@ -73,9 +72,7 @@ export const projectRouter = createTRPCRouter({
             })),
           },
         },
-        include: {
-          tags: true,
-        },
+        include: { tags: true },
       });
       return newProject;
     }),
@@ -92,14 +89,12 @@ export const projectRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { tags: tagsString } = input;
-
       const tagNames = tagsString
         ? tagsString
             .split(",")
             .map((tag) => tag.trim().toLowerCase())
             .filter((tag) => tag.length > 0)
         : [];
-
       const updatedProject = await ctx.db.project.update({
         where: { id: input.id },
         data: {

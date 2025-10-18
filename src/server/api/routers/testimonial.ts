@@ -30,6 +30,7 @@ export const testimonialRouter = createTRPCRouter({
           createdAt: true,
           createdBy: { select: { id: true, name: true } },
         },
+        cacheStrategy: { ttl: 3600 },
       });
 
       let nextCursor: number | undefined = undefined;
