@@ -55,7 +55,7 @@ export const DeleteProjectDialog = ({
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent className="max-h-[80dvh] w-[95vw] overflow-y-auto p-4 sm:max-w-md sm:p-6">
-        <AlertDialogHeader className="bg-background sticky top-0 z-10 pb-3">
+        <AlertDialogHeader className="bg-backgroundpb-3"> 
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete this

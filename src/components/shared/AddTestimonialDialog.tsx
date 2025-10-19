@@ -36,7 +36,7 @@ export const AddTestimonialDialog = () => {
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[85dvh] w-[95vw] overflow-y-auto p-4 sm:max-w-[425px] sm:p-6">
-        <DialogHeader className="bg-background sticky top-0 z-10 pb-3">
+        <DialogHeader className="bg-background pb-3">
           <DialogTitle>Give Testimony</DialogTitle>
           <DialogDescription>
             Share your experience working with Darrell Valentino. Your testimony

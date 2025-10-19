@@ -43,7 +43,7 @@ export const ProjectDialog = ({ project }: ProjectDialogProps) => {
       </DialogTrigger>
 
       <DialogContent className="max-h-[85dvh] w-[95vw] overflow-y-auto p-4 sm:max-w-lg sm:p-6">
-        <DialogHeader className="bg-background sticky top-0 z-10 pb-3">
+        <DialogHeader className="bg-background pb-3">
           <DialogTitle>
             {isEditMode ? "Edit Project" : "Add a new project"}
           </DialogTitle>
