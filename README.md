@@ -17,7 +17,18 @@
 
 [Features](#-features) • [Tech Stack](#-tech-stack) • [Quick Start](#-quick-start) • [Documentation](#-documentation) • [Contributing](#-contributing)
 
-<img src="https://media.discordapp.net/attachments/845650386768756737/1429473251037544530/darrellvalentino.com__1.png?ex=68f64435&is=68f4f2b5&hm=c92dbddf74a24ecead564bf1334c4265693393a4ceea4419fd767b8e9cf08379&=&format=webp&quality=lossless&width=486&height=930" alt="Portfolio CMS Banner" width="800" />
+<div align="center">
+  <table>
+    <tr>
+      <td width="70%">
+        <img src="https://media.discordapp.net/attachments/845650386768756737/1429473251037544530/darrellvalentino.com__1.png?ex=68f64435&is=68f4f2b5&hm=c92dbddf74a24ecead564bf1334c4265693393a4ceea4419fd767b8e9cf08379&=&format=webp&quality=lossless&width=486&height=930" alt="Portfolio CMS Desktop" width="100%" />
+      </td>
+      <td width="30%">
+        <img src="https://media.discordapp.net/attachments/845650386768756737/1429474655189864660/darrellvalentino.com_Samsung_Galaxy_S20_Ultra.png?ex=68f64584&is=68f4f404&hm=f86ee9cd6bd34d6f42185d50fd67a2a8e6d28ae0c88a4758d63124ea2170d14c&=&format=webp&quality=lossless&width=81&height=924" alt="Portfolio CMS Mobile" width="100%" />
+      </td>
+    </tr>
+  </table>
+</div>
 
 ---
 
@@ -74,7 +85,7 @@
 - ✅ **Approval Workflow** - Admin testimonial moderation
 - 🔍 **Infinite Scroll** - Smooth content loading
 
-      </td>
+    </td>
 
     </tr>
   </table>
