@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   // === INFORMASI DASAR ===
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Darrell Valentino - Full-Stack Web Developer Portfolio",
+    default: "Darrell Valentino | Personal Website",
     template: "%s | Darrell Valentino",
   },
   description:
