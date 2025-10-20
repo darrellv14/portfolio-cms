@@ -4,6 +4,11 @@ import { PendingTestimonialList } from "~/components/shared/PendingTestimonialLi
 import { auth } from "~/server/auth";
 import { api } from "~/trpc/server";
 import { env } from "~/env";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Admin",
+};
 
 export default async function AdminTestimonialsPage() {
   const session = await auth();
