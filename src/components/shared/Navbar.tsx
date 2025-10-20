@@ -183,7 +183,7 @@ export const Navbar = () => {
             priority
             data-scrolled={scrolled}
           />
-          <span className="sr-only">Darrell&apos;s Portfolio</span>
+          <span className="sr-only">Darrell Valentino&apos;s Portfolio</span>
         </Link>
 
         <nav className="pointer-events-auto absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-6 md:flex">

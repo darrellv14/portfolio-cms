@@ -87,7 +87,7 @@ export const HeroSection = () => {
                 <div className="relative h-44 w-44 sm:h-52 sm:w-52">
                   <div className="from-primary/40 to-secondary/40 absolute -inset-2 -z-10 rounded-full bg-gradient-to-br opacity-50 blur-2xl" />
                   <Image
-                    src="https://cdn.discordapp.com/attachments/845650386768756737/1428788951199780995/1000280493-Photoroom.png?ex=68f3c6e7&is=68f27567&hm=4cda2eea28a67cf5c39305431278e8b2b60db842bd0d76e9bce283a1f2597d94&"
+                    src="https://res.cloudinary.com/drvu0dpry/image/upload/v1760967602/hero_sw3jhu.png"
                     alt="Darrell's Profile Picture"
                     fill
                     priority
@@ -189,7 +189,7 @@ export const HeroSection = () => {
                     <div className="from-primary/30 to-secondary/30 rounded-full bg-gradient-to-b p-[3px]">
                       <div className="bg-background relative aspect-square w-full overflow-hidden rounded-full shadow-xl">
                         <Image
-                          src="https://cdn.discordapp.com/attachments/845650386768756737/1428788951199780995/1000280493-Photoroom.png?ex=68f3c6e7&is=68f27567&hm=4cda2eea28a67cf5c39305431278e8b2b60db842bd0d76e9bce283a1f2597d94&"
+                          src="https://res.cloudinary.com/drvu0dpry/image/upload/v1760967602/hero_sw3jhu.png"
                           alt="Darrell's Profile Picture"
                           fill
                           priority

@@ -15,7 +15,7 @@ export const Footer = () => {
           <Sparkles className="text-primary h-10 w-10" />
           <Link href="/">
             <Image
-              src="https://cdn.discordapp.com/attachments/845650386768756737/1429154582617002075/a54c500be293c78a03091a29e6da8f89.webp?ex=68f51b6c&is=68f3c9ec&hm=1fda14ed179117077fa49a227192420808cb939cdae21ea6a07f7af6fb97c7b7"
+              src="https://res.cloudinary.com/drvu0dpry/image/upload/v1760967599/footer_eaf8ep.webp"
               alt="Darrell Logo"
               width={96}
               height={96}

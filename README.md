@@ -21,10 +21,10 @@
   <table>
     <tr>
       <td width="50%">
-        <img src="https://media.discordapp.net/attachments/845650386768756737/1429473251037544530/darrellvalentino.com__1.png?ex=68f64435&is=68f4f2b5&hm=c92dbddf74a24ecead564bf1334c4265693393a4ceea4419fd767b8e9cf08379&=&format=webp&quality=lossless&width=486&height=930" alt="Portfolio CMS Desktop" width="100%" />
+        <img src="https://res.cloudinary.com/drvu0dpry/image/upload/v1760967612/image-desktop_otifgc.webp" alt="Portfolio CMS Desktop" width="100%" />
       </td>
       <td width="50%">
-        <img src="https://media.discordapp.net/attachments/845650386768756737/1429475668474855565/image.png?ex=68f64675&is=68f4f4f5&hm=dda13ccb4a07c6659dcc160063d7e202cf6eb11a0778be9c90ef4cf22017c909&=&format=webp&quality=lossless&width=459&height=930" alt="Portfolio CMS Mobile" width="100%" />
+        <img src="https://res.cloudinary.com/drvu0dpry/image/upload/v1760967618/image-mobile_nb6mv7.webp" alt="Portfolio CMS Mobile" width="100%" />
       </td>
     </tr>
   </table>
