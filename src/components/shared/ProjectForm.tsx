@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { inferRouterOutputs } from "@trpc/server";
-import Image from "next/image";
+import NextImage from "next/image"; // ⬅️ alias
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -48,7 +48,8 @@ const MIME_OUT = "image/webp";
 async function blobToDataURL(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const fr = new FileReader();
-    fr.onloadend = () => (typeof fr.result === "string" ? resolve(fr.result) : reject(new Error("Failed to convert blob")));
+    fr.onloadend = () =>
+      typeof fr.result === "string" ? resolve(fr.result) : reject(new Error("Failed to convert blob"));
     fr.onerror = () => reject(new Error("Failed to convert blob"));
     fr.readAsDataURL(blob);
   });
@@ -61,10 +62,10 @@ function fitWithin(w: number, h: number, maxW: number, maxH: number) {
 
 function loadImageFromFile(file: File): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
-    const img = new Image();
+    const img: HTMLImageElement = new window.Image(); // ⬅️ gunakan global constructor
+    img.decoding = "async";
     img.onload = () => resolve(img);
     img.onerror = () => reject(new Error("Failed to load image"));
-    img.decoding = "async";
     img.src = URL.createObjectURL(file);
   });
 }
@@ -73,7 +74,12 @@ async function compressToUnder1MB(file: File): Promise<Blob> {
   if (file.size <= MAX_BYTES) return file;
 
   const img = await loadImageFromFile(file);
-  let { w, h } = fitWithin(img.naturalWidth || img.width, img.naturalHeight || img.height, MAX_START_DIM, MAX_START_DIM);
+  let { w, h } = fitWithin(
+    img.naturalWidth || img.width,
+    img.naturalHeight || img.height,
+    MAX_START_DIM,
+    MAX_START_DIM
+  );
 
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d", { alpha: true });
@@ -81,7 +87,6 @@ async function compressToUnder1MB(file: File): Promise<Blob> {
 
   let quality = 0.92;
 
-  // Loop kualitas → lalu kecilkan dimensi bertahap sampai ≤ 1MB atau mentok.
   for (;;) {
     canvas.width = w;
     canvas.height = h;
@@ -91,7 +96,6 @@ async function compressToUnder1MB(file: File): Promise<Blob> {
     const blob: Blob | null = await new Promise((resolve) =>
       canvas.toBlob(resolve, MIME_OUT, quality)
     );
-
     if (!blob) throw new Error("Failed to compress image");
 
     if (blob.size <= MAX_BYTES) return blob;
@@ -108,11 +112,14 @@ async function compressToUnder1MB(file: File): Promise<Blob> {
       continue;
     }
 
-    return blob; // fallback: kirim ukuran terkecil yang bisa didapat.
+    return blob; // fallback
   }
 }
 
-export const ProjectForm = ({ onFormSubmit, initialData }: ProjectFormProps) => {
+export const ProjectForm = ({
+  onFormSubmit,
+  initialData,
+}: ProjectFormProps) => {
   const router = useRouter();
   const isEditMode = !!initialData;
 
@@ -155,8 +162,9 @@ export const ProjectForm = ({ onFormSubmit, initialData }: ProjectFormProps) => 
       setUploadedImageUrl(data.url);
       setValue("imageURL", data.url, { shouldValidate: true });
     },
-    onError: (error) => {
-      toast.error(`Upload failed: ${error.message}`);
+    onError: (error: unknown) => {
+      const msg = error instanceof Error ? error.message : "Upload failed.";
+      toast.error(`Upload failed: ${msg}`);
     },
     onSettled: () => {
       setIsUploading(false);
@@ -175,8 +183,9 @@ export const ProjectForm = ({ onFormSubmit, initialData }: ProjectFormProps) => 
       const dataUrl = await blobToDataURL(blob);
 
       uploadMutation.mutate({ file: dataUrl });
-    } catch (e: any) {
-      toast.error(e?.message ?? "Failed to process image.");
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Failed to process image.";
+      toast.error(message);
       setIsUploading(false);
     }
   };
@@ -190,7 +199,10 @@ export const ProjectForm = ({ onFormSubmit, initialData }: ProjectFormProps) => 
       onFormSubmit();
       reset();
     },
-    onError: (error) => toast.error(error.message),
+    onError: (error: unknown) => {
+      const msg = error instanceof Error ? error.message : "Failed to create.";
+      toast.error(msg);
+    },
   });
 
   const updateMutation = api.project.update.useMutation({
@@ -201,7 +213,10 @@ export const ProjectForm = ({ onFormSubmit, initialData }: ProjectFormProps) => 
       router.refresh();
       onFormSubmit();
     },
-    onError: (error) => toast.error(error.message),
+    onError: (error: unknown) => {
+      const msg = error instanceof Error ? error.message : "Failed to update.";
+      toast.error(msg);
+    },
   });
 
   const onSubmit = (data: ProjectFormValues) => {
@@ -249,7 +264,7 @@ export const ProjectForm = ({ onFormSubmit, initialData }: ProjectFormProps) => 
             <FieldLabel>Image</FieldLabel>
             {uploadedImageUrl && (
               <div className="my-2">
-                <Image
+                <NextImage
                   src={uploadedImageUrl}
                   alt="Project image preview"
                   width={160}
