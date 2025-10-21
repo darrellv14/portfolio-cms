@@ -155,12 +155,12 @@ export const HeroSection = () => {
                     label="GitHub"
                   />
                   <SocialLink
-                    href="https://www.linkedin.com/in/your-profile/"
+                    href="https://www.linkedin.com/in/darrellvalentino/"
                     icon={Linkedin}
                     label="LinkedIn"
                   />
                   <SocialLink
-                    href="https://www.instagram.com/your-profile/"
+                    href="https://www.instagram.com/darrellwidjaja/"
                     icon={Instagram}
                     label="Instagram"
                   />
