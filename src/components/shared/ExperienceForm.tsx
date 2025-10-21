@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { inferRouterOutputs } from "@trpc/server";
-import Image from "next/image";
+import NextImage from "next/image"; // ⬅️ alias, hindari bentrok dengan global Image()
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -43,7 +43,7 @@ interface ExperienceFormProps {
 
 /** ——— Kompresi gambar: target ≤ 1 MB ——— */
 const MAX_BYTES = 1_000_000;
-const MAX_START_DIM = 1024; // logo biasanya kecil, cukup 1024px sisi terpanjang
+const MAX_START_DIM = 1024;
 const MIN_DIM = 256;
 const MIME_OUT = "image/webp";
 
@@ -65,7 +65,7 @@ async function blobToDataURL(blob: Blob): Promise<string> {
 function loadImageFromBlob(blob: Blob): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(blob);
-    const img = new Image();
+    const img: HTMLImageElement = new window.Image(); // ⬅️ gunakan global constructor
     img.decoding = "async";
     img.onload = () => {
       URL.revokeObjectURL(url);
@@ -96,6 +96,7 @@ async function compressRasterToUnder1MB(file: File): Promise<Blob> {
 
   let quality = 0.92;
 
+  // turunkan quality → kecilkan dimensi → loop sampai ≤ 1 MB
   for (;;) {
     canvas.width = w;
     canvas.height = h;
@@ -121,7 +122,6 @@ async function compressRasterToUnder1MB(file: File): Promise<Blob> {
       continue;
     }
 
-    // fallback: kirim ukuran paling kecil yang bisa didapat
     return blob;
   }
 }
@@ -129,10 +129,7 @@ async function compressRasterToUnder1MB(file: File): Promise<Blob> {
 async function compressSvgToUnder1MB(file: File): Promise<Blob> {
   if (file.size <= MAX_BYTES) return file;
 
-  // Rasterize SVG → WebP
   const img = await loadImageFromBlob(file);
-
-  // Gunakan intrinsic size dari SVG (naturalWidth/Height), fallback ke 1024
   const natW = img.naturalWidth || 1024;
   const natH = img.naturalHeight || 1024;
   let { w, h } = fitWithin(natW, natH, MAX_START_DIM, MAX_START_DIM);
@@ -173,14 +170,10 @@ async function compressSvgToUnder1MB(file: File): Promise<Blob> {
 }
 
 async function compressToUnder1MB(file: File): Promise<Blob> {
-  if (file.type === "image/svg+xml") {
-    return compressSvgToUnder1MB(file);
-  }
-  // Raster images: png/jpg/webp
+  if (file.type === "image/svg+xml") return compressSvgToUnder1MB(file);
   return compressRasterToUnder1MB(file);
 }
 
-/** ——— Komponen Form ——— */
 export const ExperienceForm = ({
   onFormSubmit,
   initialData,
@@ -219,8 +212,9 @@ export const ExperienceForm = ({
       setUploadedImageUrl(data.url);
       setValue("logoUrl", data.url, { shouldValidate: true });
     },
-    onError: (error) => {
-      toast.error(`Upload failed: ${error.message}`);
+    onError: (error: unknown) => {
+      const msg = error instanceof Error ? error.message : "Upload failed.";
+      toast.error(`Upload failed: ${msg}`);
     },
     onSettled: () => {
       setIsUploading(false);
@@ -239,8 +233,9 @@ export const ExperienceForm = ({
       const dataUrl = await blobToDataURL(blob);
 
       uploadMutation.mutate({ file: dataUrl });
-    } catch (e: any) {
-      toast.error(e?.message ?? "Failed to process logo.");
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Failed to process logo.";
+      toast.error(message);
       setIsUploading(false);
     }
   };
@@ -254,7 +249,10 @@ export const ExperienceForm = ({
       onFormSubmit();
       reset();
     },
-    onError: (error) => toast.error(error.message),
+    onError: (error: unknown) => {
+      const msg = error instanceof Error ? error.message : "Failed to create.";
+      toast.error(msg);
+    },
   });
 
   const updateMutation = api.experience.update.useMutation({
@@ -265,7 +263,10 @@ export const ExperienceForm = ({
       router.refresh();
       onFormSubmit();
     },
-    onError: (error) => toast.error(error.message),
+    onError: (error: unknown) => {
+      const msg = error instanceof Error ? error.message : "Failed to update.";
+      toast.error(msg);
+    },
   });
 
   const onSubmit = (data: ExperienceFormValues) => {
@@ -329,7 +330,7 @@ export const ExperienceForm = ({
             <FieldLabel>Logo</FieldLabel>
             {uploadedImageUrl && (
               <div className="my-2">
-                <Image
+                <NextImage
                   src={uploadedImageUrl}
                   alt="Logo preview"
                   width={80}
