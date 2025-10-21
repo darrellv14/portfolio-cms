@@ -40,10 +40,79 @@ interface ProjectFormProps {
   initialData?: ProjectListItem;
 }
 
-export const ProjectForm = ({
-  onFormSubmit,
-  initialData,
-}: ProjectFormProps) => {
+const MAX_BYTES = 1_000_000;
+const MAX_START_DIM = 1920;
+const MIN_DIM = 720;
+const MIME_OUT = "image/webp";
+
+async function blobToDataURL(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onloadend = () => (typeof fr.result === "string" ? resolve(fr.result) : reject(new Error("Failed to convert blob")));
+    fr.onerror = () => reject(new Error("Failed to convert blob"));
+    fr.readAsDataURL(blob);
+  });
+}
+
+function fitWithin(w: number, h: number, maxW: number, maxH: number) {
+  const scale = Math.min(maxW / w, maxH / h, 1);
+  return { w: Math.round(w * scale), h: Math.round(h * scale) };
+}
+
+function loadImageFromFile(file: File): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("Failed to load image"));
+    img.decoding = "async";
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+async function compressToUnder1MB(file: File): Promise<Blob> {
+  if (file.size <= MAX_BYTES) return file;
+
+  const img = await loadImageFromFile(file);
+  let { w, h } = fitWithin(img.naturalWidth || img.width, img.naturalHeight || img.height, MAX_START_DIM, MAX_START_DIM);
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d", { alpha: true });
+  if (!ctx) throw new Error("Canvas not supported");
+
+  let quality = 0.92;
+
+  // Loop kualitas → lalu kecilkan dimensi bertahap sampai ≤ 1MB atau mentok.
+  for (;;) {
+    canvas.width = w;
+    canvas.height = h;
+    ctx.clearRect(0, 0, w, h);
+    ctx.drawImage(img, 0, 0, w, h);
+
+    const blob: Blob | null = await new Promise((resolve) =>
+      canvas.toBlob(resolve, MIME_OUT, quality)
+    );
+
+    if (!blob) throw new Error("Failed to compress image");
+
+    if (blob.size <= MAX_BYTES) return blob;
+
+    if (quality > 0.5) {
+      quality = Math.max(0.5, quality - 0.12);
+      continue;
+    }
+
+    if (w > MIN_DIM || h > MIN_DIM) {
+      w = Math.max(MIN_DIM, Math.round(w * 0.85));
+      h = Math.max(MIN_DIM, Math.round(h * 0.85));
+      quality = 0.9;
+      continue;
+    }
+
+    return blob; // fallback: kirim ukuran terkecil yang bisa didapat.
+  }
+}
+
+export const ProjectForm = ({ onFormSubmit, initialData }: ProjectFormProps) => {
   const router = useRouter();
   const isEditMode = !!initialData;
 
@@ -94,26 +163,22 @@ export const ProjectForm = ({
     },
   });
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    setIsUploading(true);
+    try {
+      setIsUploading(true);
+      toast.message("Optimizing image...", { description: "Compressing to ≤ 1 MB" });
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      if (typeof reader.result === "string") {
-        uploadMutation.mutate({ file: reader.result });
-      } else {
-        toast.error("Failed to read file.");
-        setIsUploading(false);
-      }
-    };
-    reader.onerror = () => {
-      toast.error("Error reading file.");
+      const blob = await compressToUnder1MB(file);
+      const dataUrl = await blobToDataURL(blob);
+
+      uploadMutation.mutate({ file: dataUrl });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Failed to process image.");
       setIsUploading(false);
-    };
+    }
   };
 
   const createMutation = api.project.create.useMutation({
