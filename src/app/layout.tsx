@@ -8,7 +8,7 @@ import { Navbar } from "~/components/shared/Navbar";
 import { Toaster } from "~/components/ui/sonner";
 import { ThemeProvider } from "~/components/theme-provider";
 import { MotionLazyProvider } from "~/components/providers/MotionLazyProvider";
-import { Footer } from "~/components/shared/Footer";
+import Footer from "~/components/shared/Footer";
 
 // === SEO Konfigurasi ===
 const siteUrl = "https://darrellvalentino.com";

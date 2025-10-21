@@ -11,6 +11,8 @@ import { ExperienceListSkeleton } from "~/components/shared/ExperienceListSkelet
 import { ProjectListSkeleton } from "~/components/shared/ProjectListSkeleton";
 import { TestimonialListSkeleton } from "~/components/shared/TestimonialListSkeleton";
 import { FloatingSocials } from "~/components/shared/FloatingSocials";
+import { ContactSkeleton } from "~/components/shared/ContactSkeleton";
+import { Contact } from "~/components/shared/Contact";
 
 export default function HomePage() {
   return (
@@ -51,6 +53,17 @@ export default function HomePage() {
         >
           <Suspense fallback={<TestimonialListSkeleton />}>
             <Testimonials />
+          </Suspense>
+        </section>
+
+        <Separator />
+
+        <section
+          id="contact"
+          className="scroll-mt-24 space-y-6 md:scroll-mt-28"
+        >
+          <Suspense fallback={<ContactSkeleton />}>
+            <Contact />
           </Suspense>
         </section>
       </div>
