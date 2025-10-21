@@ -138,7 +138,7 @@ export const HeroSection = () => {
                   size="lg"
                   className="shadow-primary/20 shadow-lg"
                 >
-                  <Link href="mailto:[Email]">Contact Me</Link>
+                  <Link href="#contact">Contact Me</Link>
                 </Button>
 
                 <Button asChild variant="outline" size="lg">
