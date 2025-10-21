@@ -18,8 +18,8 @@ import { toast } from "sonner";
 
 const socialLinks = [
   { href: "https://github.com/darrellv14", icon: Github, label: "GitHub" },
-  { href: "https://www.linkedin.com/in/your-profile/", icon: Linkedin, label: "LinkedIn" },
-  { href: "https://www.instagram.com/your-profile/", icon: Instagram, label: "Instagram" },
+  { href: "https://www.linkedin.com/in/darrellvalentino/", icon: Linkedin, label: "LinkedIn" },
+  { href: "https://www.instagram.com/darrellwidjaja/", icon: Instagram, label: "Instagram" },
 ];
 
 function createSmoothScroller() {
