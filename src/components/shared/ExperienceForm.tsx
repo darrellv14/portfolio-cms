@@ -41,6 +41,146 @@ interface ExperienceFormProps {
   initialData?: Experience;
 }
 
+/** ——— Kompresi gambar: target ≤ 1 MB ——— */
+const MAX_BYTES = 1_000_000;
+const MAX_START_DIM = 1024; // logo biasanya kecil, cukup 1024px sisi terpanjang
+const MIN_DIM = 256;
+const MIME_OUT = "image/webp";
+
+function fitWithin(w: number, h: number, maxW: number, maxH: number) {
+  const scale = Math.min(maxW / w, maxH / h, 1);
+  return { w: Math.round(w * scale), h: Math.round(h * scale) };
+}
+
+async function blobToDataURL(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onloadend = () =>
+      typeof fr.result === "string" ? resolve(fr.result) : reject(new Error("Failed to convert blob"));
+    fr.onerror = () => reject(new Error("Failed to convert blob"));
+    fr.readAsDataURL(blob);
+  });
+}
+
+function loadImageFromBlob(blob: Blob): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.decoding = "async";
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(img);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Failed to load image"));
+    };
+    img.src = url;
+  });
+}
+
+async function compressRasterToUnder1MB(file: File): Promise<Blob> {
+  if (file.size <= MAX_BYTES) return file;
+
+  const img = await loadImageFromBlob(file);
+  let { w, h } = fitWithin(
+    img.naturalWidth || img.width,
+    img.naturalHeight || img.height,
+    MAX_START_DIM,
+    MAX_START_DIM
+  );
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d", { alpha: true });
+  if (!ctx) throw new Error("Canvas not supported");
+
+  let quality = 0.92;
+
+  for (;;) {
+    canvas.width = w;
+    canvas.height = h;
+    ctx.clearRect(0, 0, w, h);
+    ctx.drawImage(img, 0, 0, w, h);
+
+    const blob: Blob | null = await new Promise((resolve) =>
+      canvas.toBlob(resolve, MIME_OUT, quality)
+    );
+    if (!blob) throw new Error("Failed to compress image");
+
+    if (blob.size <= MAX_BYTES) return blob;
+
+    if (quality > 0.5) {
+      quality = Math.max(0.5, quality - 0.12);
+      continue;
+    }
+
+    if (w > MIN_DIM || h > MIN_DIM) {
+      w = Math.max(MIN_DIM, Math.round(w * 0.85));
+      h = Math.max(MIN_DIM, Math.round(h * 0.85));
+      quality = 0.88;
+      continue;
+    }
+
+    // fallback: kirim ukuran paling kecil yang bisa didapat
+    return blob;
+  }
+}
+
+async function compressSvgToUnder1MB(file: File): Promise<Blob> {
+  if (file.size <= MAX_BYTES) return file;
+
+  // Rasterize SVG → WebP
+  const img = await loadImageFromBlob(file);
+
+  // Gunakan intrinsic size dari SVG (naturalWidth/Height), fallback ke 1024
+  const natW = img.naturalWidth || 1024;
+  const natH = img.naturalHeight || 1024;
+  let { w, h } = fitWithin(natW, natH, MAX_START_DIM, MAX_START_DIM);
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d", { alpha: true });
+  if (!ctx) throw new Error("Canvas not supported");
+
+  let quality = 0.92;
+
+  for (;;) {
+    canvas.width = w;
+    canvas.height = h;
+    ctx.clearRect(0, 0, w, h);
+    ctx.drawImage(img, 0, 0, w, h);
+
+    const blob: Blob | null = await new Promise((resolve) =>
+      canvas.toBlob(resolve, MIME_OUT, quality)
+    );
+    if (!blob) throw new Error("Failed to compress image");
+
+    if (blob.size <= MAX_BYTES) return blob;
+
+    if (quality > 0.6) {
+      quality = Math.max(0.6, quality - 0.12);
+      continue;
+    }
+
+    if (w > MIN_DIM || h > MIN_DIM) {
+      w = Math.max(MIN_DIM, Math.round(w * 0.85));
+      h = Math.max(MIN_DIM, Math.round(h * 0.85));
+      quality = 0.9;
+      continue;
+    }
+
+    return blob;
+  }
+}
+
+async function compressToUnder1MB(file: File): Promise<Blob> {
+  if (file.type === "image/svg+xml") {
+    return compressSvgToUnder1MB(file);
+  }
+  // Raster images: png/jpg/webp
+  return compressRasterToUnder1MB(file);
+}
+
+/** ——— Komponen Form ——— */
 export const ExperienceForm = ({
   onFormSubmit,
   initialData,
@@ -87,26 +227,22 @@ export const ExperienceForm = ({
     },
   });
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    setIsUploading(true);
+    try {
+      setIsUploading(true);
+      toast.message("Optimizing logo...", { description: "Compressing to ≤ 1 MB" });
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      if (typeof reader.result === "string") {
-        uploadMutation.mutate({ file: reader.result });
-      } else {
-        toast.error("Failed to read file.");
-        setIsUploading(false);
-      }
-    };
-    reader.onerror = () => {
-      toast.error("Error reading file.");
+      const blob = await compressToUnder1MB(file);
+      const dataUrl = await blobToDataURL(blob);
+
+      uploadMutation.mutate({ file: dataUrl });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Failed to process logo.");
       setIsUploading(false);
-    };
+    }
   };
 
   const createMutation = api.experience.create.useMutation({
