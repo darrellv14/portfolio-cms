@@ -64,18 +64,16 @@ export function ProjectList({ initialProjectsPage }: ProjectListProps) {
             ))}
           </div>
 
-          <div className="mt-8 flex justify-center">
-            <Button
-              onClick={() => fetchNextPage()}
-              disabled={!hasNextPage || isFetchingNextPage}
-            >
-              {isFetchingNextPage
-                ? "Loading more..."
-                : hasNextPage
-                  ? "Load More"
-                  : "No more projects"}
-            </Button>
-          </div>
+          {hasNextPage && (
+            <div className="mt-8 flex justify-center">
+              <Button
+                onClick={() => fetchNextPage()}
+                disabled={isFetchingNextPage}
+              >
+                {isFetchingNextPage ? "Loading more..." : "Load More"}
+              </Button>
+            </div>
+          )}
         </>
       ) : (
         <p className="text-muted-foreground">No projects yet! Coming soon.</p>
