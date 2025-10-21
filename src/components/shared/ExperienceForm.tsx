@@ -2,6 +2,9 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { inferRouterOutputs } from "@trpc/server";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -16,10 +19,9 @@ import {
 } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
+import { revalidateExperiencesAction } from "~/lib/actions";
 import type { AppRouter } from "~/server/api/root";
 import { api } from "~/trpc/react";
-import { revalidateExperiencesAction } from "~/lib/actions";
-import { useRouter } from "next/navigation";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 type Experience = RouterOutput["experience"]["getAll"][number];
@@ -29,7 +31,7 @@ const experienceSchema = z.object({
   company: z.string().min(1, "Company name is required."),
   dateRange: z.string().min(1, "Date range is required."),
   description: z.string().min(1, "Description is required."),
-  logoUrl: z.string().url("Please enter a valid logo URL."),
+  logoUrl: z.string().url("Logo is required. Please upload one."),
 });
 
 type ExperienceFormValues = z.infer<typeof experienceSchema>;
@@ -46,17 +48,66 @@ export const ExperienceForm = ({
   const router = useRouter();
   const isEditMode = !!initialData;
 
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(
+    initialData?.logoUrl ?? null,
+  );
+
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<ExperienceFormValues>({
     resolver: zodResolver(experienceSchema),
     defaultValues: initialData ?? {},
   });
 
+  useEffect(() => {
+    if (initialData?.logoUrl) {
+      setUploadedImageUrl(initialData.logoUrl);
+      setValue("logoUrl", initialData.logoUrl);
+    }
+  }, [initialData, setValue]);
+
   const utils = api.useUtils();
+
+  const uploadMutation = api.image.upload.useMutation({
+    onSuccess: (data) => {
+      toast.success("Logo uploaded successfully!");
+      setUploadedImageUrl(data.url);
+      setValue("logoUrl", data.url, { shouldValidate: true });
+    },
+    onError: (error) => {
+      toast.error(`Upload failed: ${error.message}`);
+    },
+    onSettled: () => {
+      setIsUploading(false);
+    },
+  });
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      if (typeof reader.result === "string") {
+        uploadMutation.mutate({ file: reader.result });
+      } else {
+        toast.error("Failed to read file.");
+        setIsUploading(false);
+      }
+    };
+    reader.onerror = () => {
+      toast.error("Error reading file.");
+      setIsUploading(false);
+    };
+  };
 
   const createMutation = api.experience.create.useMutation({
     onSuccess: async () => {
@@ -89,7 +140,7 @@ export const ExperienceForm = ({
     }
   };
 
-  const isPending = createMutation.isPending || updateMutation.isPending;
+  const isFormPending = createMutation.isPending || updateMutation.isPending;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -139,24 +190,47 @@ export const ExperienceForm = ({
           </Field>
 
           <Field>
-            <FieldLabel>Logo URL</FieldLabel>
+            <FieldLabel>Logo</FieldLabel>
+            {uploadedImageUrl && (
+              <div className="my-2">
+                <Image
+                  src={uploadedImageUrl}
+                  alt="Logo preview"
+                  width={80}
+                  height={80}
+                  className="rounded-md border object-contain"
+                />
+              </div>
+            )}
             <Input
-              {...register("logoUrl")}
-              placeholder="https://example.com/logo.png"
+              type="file"
+              accept="image/png, image/jpeg, image/webp, image/svg+xml"
+              onChange={handleFileChange}
+              disabled={isUploading}
             />
+            {isUploading && (
+              <p className="text-muted-foreground mt-2 text-sm">Uploading...</p>
+            )}
             {errors.logoUrl && (
               <FieldError>{errors.logoUrl.message}</FieldError>
             )}
           </Field>
+          <input type="hidden" {...register("logoUrl")} />
         </FieldGroup>
       </FieldSet>
 
-      <Button type="submit" disabled={isPending} className="w-full">
-        {isPending
-          ? "Submitting..."
-          : isEditMode
-            ? "Save Changes"
-            : "Add Experience"}
+      <Button
+        type="submit"
+        disabled={isFormPending || isUploading}
+        className="w-full"
+      >
+        {isUploading
+          ? "Uploading logo..."
+          : isFormPending
+            ? "Submitting..."
+            : isEditMode
+              ? "Save Changes"
+              : "Add Experience"}
       </Button>
     </form>
   );

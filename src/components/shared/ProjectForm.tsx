@@ -2,7 +2,9 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { inferRouterOutputs } from "@trpc/server";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -27,7 +29,7 @@ type ProjectListItem = RouterOutput["project"]["getAll"]["items"][number];
 const projectSchema = z.object({
   title: z.string().min(1, "Title is required."),
   description: z.string().min(1, "Description is required."),
-  imageURL: z.string().url("Please enter a valid URL."),
+  imageURL: z.string().url("Image is required. Please upload one."),
   tags: z.string().optional(),
 });
 
@@ -45,10 +47,16 @@ export const ProjectForm = ({
   const router = useRouter();
   const isEditMode = !!initialData;
 
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(
+    initialData?.imageURL ?? null,
+  );
+
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
@@ -63,7 +71,50 @@ export const ProjectForm = ({
     },
   });
 
+  useEffect(() => {
+    if (initialData?.imageURL) {
+      setUploadedImageUrl(initialData.imageURL);
+      setValue("imageURL", initialData.imageURL);
+    }
+  }, [initialData, setValue]);
+
   const utils = api.useUtils();
+
+  const uploadMutation = api.image.upload.useMutation({
+    onSuccess: (data) => {
+      toast.success("Image uploaded successfully!");
+      setUploadedImageUrl(data.url);
+      setValue("imageURL", data.url, { shouldValidate: true });
+    },
+    onError: (error) => {
+      toast.error(`Upload failed: ${error.message}`);
+    },
+    onSettled: () => {
+      setIsUploading(false);
+    },
+  });
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      if (typeof reader.result === "string") {
+        uploadMutation.mutate({ file: reader.result });
+      } else {
+        toast.error("Failed to read file.");
+        setIsUploading(false);
+      }
+    };
+    reader.onerror = () => {
+      toast.error("Error reading file.");
+      setIsUploading(false);
+    };
+  };
 
   const createMutation = api.project.create.useMutation({
     onSuccess: async () => {
@@ -96,7 +147,7 @@ export const ProjectForm = ({
     }
   };
 
-  const isPending = createMutation.isPending || updateMutation.isPending;
+  const isFormPending = createMutation.isPending || updateMutation.isPending;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -130,24 +181,47 @@ export const ProjectForm = ({
           </Field>
 
           <Field>
-            <FieldLabel>Image URL</FieldLabel>
+            <FieldLabel>Image</FieldLabel>
+            {uploadedImageUrl && (
+              <div className="my-2">
+                <Image
+                  src={uploadedImageUrl}
+                  alt="Project image preview"
+                  width={160}
+                  height={90}
+                  className="rounded-md border object-cover"
+                />
+              </div>
+            )}
             <Input
-              {...register("imageURL")}
-              placeholder="https://example.com/image.png"
+              type="file"
+              accept="image/png, image/jpeg, image/webp"
+              onChange={handleFileChange}
+              disabled={isUploading}
             />
+            {isUploading && (
+              <p className="text-muted-foreground mt-2 text-sm">Uploading...</p>
+            )}
             {errors.imageURL && (
               <FieldError>{errors.imageURL.message}</FieldError>
             )}
           </Field>
+          <input type="hidden" {...register("imageURL")} />
         </FieldGroup>
       </FieldSet>
 
-      <Button type="submit" disabled={isPending} className="w-full">
-        {isPending
-          ? "Submitting..."
-          : isEditMode
-            ? "Save Changes"
-            : "Add Project"}
+      <Button
+        type="submit"
+        disabled={isFormPending || isUploading}
+        className="w-full"
+      >
+        {isUploading
+          ? "Uploading image..."
+          : isFormPending
+            ? "Submitting..."
+            : isEditMode
+              ? "Save Changes"
+              : "Add Project"}
       </Button>
     </form>
   );
