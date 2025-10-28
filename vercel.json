@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/chat", // Cocokkan path /chat persis
+      "destination": "https://livechat-t3stack.vercel.app/"
+    },
+    {
+      "source": "/chat/:path*",
+      "destination": "https://livechat-t3stack.vercel.app/:path*"
+    }
+  ]
+}
